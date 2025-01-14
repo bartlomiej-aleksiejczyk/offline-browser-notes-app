@@ -1,5 +1,5 @@
 export interface NoteSummary {
   id: string;
-  index: string;
+  index: number;
   title: string;
 }
