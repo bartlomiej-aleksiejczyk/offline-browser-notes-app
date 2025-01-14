@@ -31,6 +31,11 @@ export class PersistanceService {
     position: 'start' | 'end' | number = 'end'
   ): Promise<void> {
     const allNotes = await this.getAllNotes();
+    const existingNote = allNotes.find((n) => n.title === note.title);
+    if (existingNote) {
+      throw new Error(`A note with the title "${note.title}" already exists`);
+    }
+
     let insertIndex: number;
 
     if (position === 'start') {
@@ -57,17 +62,54 @@ export class PersistanceService {
     await transaction.done;
   }
 
+  async reorderNote(noteTitle: string, targetIndex: number): Promise<void> {
+    const allNotes = await this.getAllNotes();
+
+    const validIndex = Math.max(0, Math.min(targetIndex, allNotes.length - 1));
+
+    const noteToMove = allNotes.find((note) => note.title === noteTitle);
+    if (!noteToMove) {
+      throw new Error(`Note with title "${noteTitle}" not found`);
+    }
+
+    const notesWithoutMoved = allNotes.filter(
+      (note) => note.title !== noteTitle
+    );
+
+    notesWithoutMoved.splice(validIndex, 0, noteToMove);
+
+    const transaction = this.db.transaction(this.storeName, 'readwrite');
+    const store = transaction.objectStore(this.storeName);
+
+    for (let i = 0; i < notesWithoutMoved.length; i++) {
+      const note = notesWithoutMoved[i];
+      note.index = i;
+      await store.put(note);
+    }
+
+    await transaction.done;
+  }
+
+  async getNoteByTitle(title: string): Promise<Note | undefined> {
+    const allNotes = await this.getAllNotes();
+    return allNotes.find((note) => note.title === title);
+  }
+
   async updateNote(note: Note): Promise<void> {
     await this.db.put(this.storeName, note);
   }
 
-  async deleteNote(id: string): Promise<void> {
-    await this.db.delete(this.storeName, id);
-    await this.reorderNotes();
-  }
+  async deleteNote(title: string): Promise<void> {
+    const allNotes = await this.getAllNotes();
 
-  async getNoteById(id: string): Promise<Note | undefined> {
-    return await this.db.get(this.storeName, id);
+    const noteToDelete = allNotes.find((note) => note.title === title);
+    if (!noteToDelete) {
+      throw new Error(`Note with title "${title}" not found`);
+    }
+
+    await this.db.delete(this.storeName, noteToDelete.id);
+
+    await this.reorderNotes();
   }
 
   async getAllNotes(): Promise<Note[]> {
@@ -87,7 +129,7 @@ export class PersistanceService {
 
     while (cursor && notes.length < limit) {
       const note = cursor.value;
-      notes.push({ id: note.id, index: note.index, title: note.name });
+      notes.push({ index: note.index, title: note.name });
       cursor = await cursor.continue();
     }
 
@@ -112,32 +154,6 @@ export class PersistanceService {
       note.index = i + 1;
       await store.put(note);
     }
-    await transaction.done;
-  }
-
-  async reorderNote(noteId: string, targetIndex: number): Promise<void> {
-    const allNotes = await this.getAllNotes();
-
-    const validIndex = Math.max(0, Math.min(targetIndex, allNotes.length - 1));
-
-    const noteToMove = allNotes.find((note) => note.id === noteId);
-    if (!noteToMove) {
-      throw new Error(`Note with ID ${noteId} not found`);
-    }
-
-    const notesWithoutMoved = allNotes.filter((note) => note.id !== noteId);
-
-    notesWithoutMoved.splice(validIndex, 0, noteToMove);
-
-    const transaction = this.db.transaction(this.storeName, 'readwrite');
-    const store = transaction.objectStore(this.storeName);
-
-    for (let i = 0; i < notesWithoutMoved.length; i++) {
-      const note = notesWithoutMoved[i];
-      note.index = i;
-      await store.put(note);
-    }
-
     await transaction.done;
   }
 }
