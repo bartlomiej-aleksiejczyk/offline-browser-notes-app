@@ -1,19 +1,32 @@
 import { Component, OnInit } from '@angular/core';
 import { NoteSummary } from '../../../core/models/note-summary.model';
-import { PersistanceService } from '../../../core/services/persistance.service';
+import { NotesStoreService } from '../notes-store.service';
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-notes-sidebar',
-  imports: [],
   templateUrl: './notes-sidebar.component.html',
-  styleUrl: './notes-sidebar.component.css',
+  styleUrls: ['./notes-sidebar.component.css'],
+  imports: [CommonModule],
 })
 export class NotesSidebarComponent implements OnInit {
   notes: NoteSummary[] = [];
 
-  constructor(private persistanceService: PersistanceService) {}
+  constructor(private notesStore: NotesStoreService) {}
 
-  async ngOnInit(): Promise<void> {
-    const allNotes = await this.persistanceService.getPaginatedNotes();
-    this.notes = allNotes.notesSummaries;
+  ngOnInit(): void {
+    this.notesStore.notesList$.subscribe((notes) => {
+      this.notes = notes;
+    });
+
+    this.notesStore.fetchNotes();
+  }
+
+  selectNote(title: string): void {
+    this.notesStore.selectNote(title);
+  }
+
+  loadMoreNotes(): void {
+    this.notesStore.nextPage();
   }
 }

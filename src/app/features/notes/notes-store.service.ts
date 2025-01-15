@@ -27,9 +27,25 @@ export class NotesStoreService {
   async fetchNotes(): Promise<void> {
     const { notesSummaries, hasMore } =
       await this.persistanceService.getPaginatedNotes(this.pageSize, 0);
-    this.notesListSubject.next(notesSummaries);
-    this.hasMore = hasMore;
-    this.currentPage = 0;
+    if (notesSummaries.length === 0) {
+      await this.addDefaultNote();
+    } else {
+      this.notesListSubject.next(notesSummaries);
+      this.hasMore = hasMore;
+      this.currentPage = 0;
+    }
+  }
+
+  async addDefaultNote(): Promise<void> {
+    const defaultNote: Omit<Note, 'index'> = {
+      title: 'Default Note',
+      content: 'This is the default note content.',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    await this.persistanceService.addNote(defaultNote, 'start');
+    await this.fetchNotes();
   }
 
   async loadPage(page: number): Promise<void> {

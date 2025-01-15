@@ -1,1 +1,26 @@
-<p>notes-sidebar works!</p>
+<div class="notes-container">
+  <h2>Notes</h2>
+
+  <!-- If there are no notes, display a message -->
+  <div *ngIf="notes.length === 0" class="no-notes">
+    <p>No notes available.</p>
+    <button type="button" (click)="addDefaultNote()">Add Default Note</button>
+  </div>
+
+  <!-- If there are notes, display them -->
+  <ul *ngIf="notes.length > 0">
+    <li
+      *ngFor="let note of notes; let i = index"
+      (click)="selectNote(note.title)"
+    >
+      <span>{{ i + 1 }}. {{ note.title }}</span>
+    </li>
+  </ul>
+
+  <!-- Load more button -->
+  {% comment %}
+  <div *ngIf="hasMore" class="load-more">
+    <button type="button" (click)="loadMoreNotes()">Load More Notes</button>
+  </div>
+  {% endcomment %}
+</div>
