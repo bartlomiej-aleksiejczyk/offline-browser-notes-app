@@ -23,6 +23,7 @@ export class NotesComponent implements OnInit {
     const page = await this.loadPage(0);
     this.notes = page.notesSummaries;
     this.hasMore = page.hasMore;
+    if (this.notes.length === 0) this.addNewNote();
   }
 
   async loadPage(page: number): Promise<NotesPage> {
@@ -44,7 +45,6 @@ export class NotesComponent implements OnInit {
 
   async addNewNote(position: 'start' | 'end' | number = 'end'): Promise<void> {
     const newNote: Omit<Note, 'index'> = {
-      id: Date.now().toString(),
       title: 'A New Note',
       content: 'This is the content of the new note.',
       createdAt: new Date(),
@@ -63,6 +63,28 @@ export class NotesComponent implements OnInit {
       await this.persistanceService.reorderNote(noteId, index);
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async updateSelectedNote(title: string): Promise<void> {
+    try {
+      await this.persistanceService.setSelectedNote(title);
+      console.log(`Selected note updated to: ${title}`);
+    } catch (error) {
+      console.error('Error updating selected note:', error);
+    }
+  }
+
+  async fetchSelectedNote(): Promise<void> {
+    try {
+      const selectedNote = await this.persistanceService.getSelectedNote();
+      if (selectedNote) {
+        console.log(`Currently selected note: ${selectedNote}`);
+      } else {
+        console.log('No note is currently selected.');
+      }
+    } catch (error) {
+      console.error('Error fetching selected note:', error);
     }
   }
 }

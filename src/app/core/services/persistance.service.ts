@@ -20,7 +20,10 @@ export class PersistanceService {
     this.db = await openDB(this.dbName, 1, {
       upgrade(db) {
         if (!db.objectStoreNames.contains('notes')) {
-          db.createObjectStore('notes', { keyPath: 'id' });
+          db.createObjectStore('notes', { keyPath: 'title' });
+        }
+        if (!db.objectStoreNames.contains('settings')) {
+          db.createObjectStore('settings'); // Key-value store
         }
       },
     });
@@ -107,7 +110,7 @@ export class PersistanceService {
       throw new Error(`Note with title "${title}" not found`);
     }
 
-    await this.db.delete(this.storeName, noteToDelete.id);
+    await this.db.delete(this.storeName, noteToDelete.title);
 
     await this.reorderNotes();
   }
@@ -155,5 +158,16 @@ export class PersistanceService {
       await store.put(note);
     }
     await transaction.done;
+  }
+
+  async setSelectedNote(title: string): Promise<void> {
+    const transaction = this.db.transaction('settings', 'readwrite');
+    const store = transaction.objectStore('settings');
+    await store.put(title, 'selectedNote');
+    await transaction.done;
+  }
+
+  async getSelectedNote(): Promise<string | null> {
+    return await this.db.get('settings', 'selectedNote');
   }
 }
