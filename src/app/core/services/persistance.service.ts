@@ -120,6 +120,9 @@ export class PersistanceService {
   }
 
   async getPaginatedNotes(limit = 1000, offset = 0): Promise<NotesPage> {
+    await this.initDB();
+
+    console.log(this.db)
     const transaction = this.db.transaction(this.storeName, 'readonly');
     const store = transaction.objectStore(this.storeName);
     const index = store.index('index');
