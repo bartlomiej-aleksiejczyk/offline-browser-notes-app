@@ -21,27 +21,7 @@ export class NotesComponent implements OnInit {
   constructor(private persistanceService: PersistanceService) {}
 
   async ngOnInit(): Promise<void> {
-    const page = await this.loadPage(0);
-    this.notes = page.notesSummaries;
-    this.hasMore = page.hasMore;
     if (this.notes.length === 0) this.addNewNote();
-  }
-
-  async loadPage(page: number): Promise<NotesPage> {
-    const offset = page * this.pageSize;
-    return await this.persistanceService.getPaginatedNotes(
-      this.pageSize,
-      offset
-    );
-  }
-
-  async nextPage(): Promise<void> {
-    if (this.hasMore) {
-      const page = await this.loadPage(this.currentPage + 1);
-      this.notes.push(...page.notesSummaries);
-      this.hasMore = page.hasMore;
-      this.currentPage++;
-    }
   }
 
   async addNewNote(position: 'start' | 'end' | number = 'end'): Promise<void> {

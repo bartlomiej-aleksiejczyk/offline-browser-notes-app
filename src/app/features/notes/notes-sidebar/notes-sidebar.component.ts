@@ -19,14 +19,10 @@ export class NotesSidebarComponent implements OnInit {
       this.notes = notes;
     });
 
-    this.notesStore.fetchNotes();
+    this.notesStore.loadAllNotes();
   }
 
   selectNote(title: string): void {
     this.notesStore.selectNote(title);
-  }
-
-  loadMoreNotes(): void {
-    this.notesStore.nextPage();
   }
 }

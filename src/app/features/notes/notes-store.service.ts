@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { NoteSummary } from '../../core/models/note-summary.model';
 import { PersistanceService } from '../../core/services/persistance.service';
 import { Note } from '../../core/models/note.model';
 
@@ -8,32 +7,17 @@ import { Note } from '../../core/models/note.model';
   providedIn: 'root',
 })
 export class NotesStoreService {
-  private notesListSubject = new BehaviorSubject<NoteSummary[]>([]);
+  private notesListSubject = new BehaviorSubject<Note[]>([]);
   private selectedNoteTitleSubject = new BehaviorSubject<string | null>(null);
-  private currentPage = 0;
-  private pageSize = 1000;
-  private hasMore = false;
 
   constructor(private persistanceService: PersistanceService) {}
 
-  get notesList$(): Observable<NoteSummary[]> {
+  get notesList$(): Observable<Note[]> {
     return this.notesListSubject.asObservable();
   }
 
   get selectedNoteTitle$(): Observable<string | null> {
     return this.selectedNoteTitleSubject.asObservable();
-  }
-
-  async fetchNotes(): Promise<void> {
-    const { notesSummaries, hasMore } =
-      await this.persistanceService.getPaginatedNotes(this.pageSize, 0);
-    if (notesSummaries.length === 0) {
-      await this.addDefaultNote();
-    } else {
-      this.notesListSubject.next(notesSummaries);
-      this.hasMore = hasMore;
-      this.currentPage = 0;
-    }
   }
 
   async addDefaultNote(): Promise<void> {
@@ -45,27 +29,13 @@ export class NotesStoreService {
     };
 
     await this.persistanceService.addNote(defaultNote, 'start');
-    await this.fetchNotes();
+    await this.loadAllNotes();
   }
 
-  async loadPage(page: number): Promise<void> {
-    const offset = page * this.pageSize;
-    const { notesSummaries, hasMore } =
-      await this.persistanceService.getPaginatedNotes(this.pageSize, offset);
+  async loadAllNotes(): Promise<void> {
+    const notes = await this.persistanceService.getSortedNotes();
 
-    const updatedNotes =
-      page === 0
-        ? notesSummaries
-        : [...this.notesListSubject.value, ...notesSummaries];
-    this.notesListSubject.next(updatedNotes);
-    this.hasMore = hasMore;
-    this.currentPage = page;
-  }
-
-  async nextPage(): Promise<void> {
-    if (this.hasMore) {
-      await this.loadPage(this.currentPage + 1);
-    }
+    this.notesListSubject.next(notes);
   }
 
   async addNewNote(position: 'start' | 'end' | number = 'end'): Promise<void> {
@@ -77,18 +47,18 @@ export class NotesStoreService {
     };
 
     await this.persistanceService.addNote(newNote, position);
-    await this.fetchNotes();
+    await this.loadAllNotes();
   }
 
   async updateNote(note: Note): Promise<void> {
     await this.persistanceService.updateNote(note);
-    await this.fetchNotes();
+    await this.loadAllNotes();
   }
 
   async moveNote(title: string, index: number): Promise<void> {
     try {
       await this.persistanceService.reorderNote(title, index);
-      await this.fetchNotes();
+      await this.loadAllNotes();
     } catch (error) {
       console.error(error);
     }

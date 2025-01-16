@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { openDB, IDBPDatabase } from 'idb';
 import { Note } from '../models/note.model';
-import { NoteSummary } from '../models/note-summary.model';
-import { NotesPage } from '../models/notes-page.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,9 +9,10 @@ export class PersistanceService {
   private dbName = 'NotesAppDB';
   private storeName = 'notes';
   private db!: IDBPDatabase;
+  private dbInitialized: Promise<void>;
 
   constructor() {
-    this.initDB();
+    this.dbInitialized = this.initDB();
   }
 
   private async initDB(): Promise<void> {
@@ -60,6 +59,8 @@ export class PersistanceService {
     }
 
     const newNote: Note = { ...note, index: insertIndex };
+    console.log(allNotes);
+    newNote.title = 'sdaasdasd22313';
     await store.add(newNote);
 
     await transaction.done;
@@ -99,6 +100,8 @@ export class PersistanceService {
   }
 
   async updateNote(note: Note): Promise<void> {
+    await this.dbInitialized;
+
     await this.db.put(this.storeName, note);
   }
 
@@ -116,39 +119,28 @@ export class PersistanceService {
   }
 
   async getAllNotes(): Promise<Note[]> {
+    await this.dbInitialized;
+
     return await this.db.getAll(this.storeName);
   }
 
-  async getPaginatedNotes(limit = 1000, offset = 0): Promise<NotesPage> {
-    await this.initDB();
+  async getSortedNotes(): Promise<Note[]> {
+    await this.dbInitialized;
 
-    console.log(this.db)
     const transaction = this.db.transaction(this.storeName, 'readonly');
     const store = transaction.objectStore(this.storeName);
-    const index = store.index('index');
-    const notes: NoteSummary[] = [];
-    let cursor = await index.openCursor();
+    const allNotes: Note[] = await store.getAll();
 
-    for (let i = 0; i < offset && cursor; i++) {
-      cursor = await cursor.continue();
-    }
+    const sortedNotes = allNotes.sort(
+      (a, b) => (a.index ?? 0) - (b.index ?? 0)
+    );
 
-    while (cursor && notes.length < limit) {
-      const note = cursor.value;
-      notes.push({ index: note.index, title: note.name });
-      cursor = await cursor.continue();
-    }
-
-    const hasMore = !!cursor;
-
-    return {
-      notesSummaries: notes,
-      limit: limit,
-      offset: offset,
-      hasMore: hasMore,
-    };
+    return sortedNotes;
   }
+
   private async reorderNotes(): Promise<void> {
+    await this.dbInitialized;
+
     const allNotes = await this.getAllNotes();
     const sortedNotes = allNotes.sort((a, b) => a.index - b.index);
 
