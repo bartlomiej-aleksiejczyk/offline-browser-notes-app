@@ -34,6 +34,7 @@ export class NotesStoreService {
 
   async loadAllNotes(): Promise<void> {
     const notes = await this.persistanceService.getSortedNotes();
+    if (notes.length === 0) this.addNewNote();
 
     this.notesListSubject.next(notes);
   }
@@ -69,7 +70,7 @@ export class NotesStoreService {
     await this.persistanceService.setSelectedNote(title);
   }
 
-  async fetchSelectedNote(): Promise<void> {
+  async loadSelectedNote(): Promise<void> {
     try {
       const selectedNote = await this.persistanceService.getSelectedNote();
       this.selectedNoteTitleSubject.next(selectedNote);

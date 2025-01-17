@@ -16,6 +16,6 @@ export class NoteDisplayComponent implements OnInit {
       this.selectedNoteTitle = title;
     });
 
-    this.notesStore.fetchSelectedNote();
+    this.notesStore.loadSelectedNote();
   }
 }

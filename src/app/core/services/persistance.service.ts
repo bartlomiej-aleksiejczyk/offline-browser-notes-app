@@ -22,7 +22,7 @@ export class PersistanceService {
           db.createObjectStore('notes', { keyPath: 'title' });
         }
         if (!db.objectStoreNames.contains('settings')) {
-          db.createObjectStore('settings'); // Key-value store
+          db.createObjectStore('settings');
         }
       },
     });
@@ -59,8 +59,6 @@ export class PersistanceService {
     }
 
     const newNote: Note = { ...note, index: insertIndex };
-    console.log(allNotes);
-    newNote.title = 'sdaasdasd22313';
     await store.add(newNote);
 
     await transaction.done;
@@ -156,6 +154,8 @@ export class PersistanceService {
   }
 
   async setSelectedNote(title: string): Promise<void> {
+    await this.dbInitialized;
+
     const transaction = this.db.transaction('settings', 'readwrite');
     const store = transaction.objectStore('settings');
     await store.put(title, 'selectedNote');
@@ -163,6 +163,8 @@ export class PersistanceService {
   }
 
   async getSelectedNote(): Promise<string | null> {
+    await this.dbInitialized;
+
     return await this.db.get('settings', 'selectedNote');
   }
 }
