@@ -1,9 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, computed } from '@angular/core';
 import { NoteSummary } from '../../../core/models/note-summary.model';
+import { map } from 'rxjs/operators';
 import { NotesStoreService } from '../notes-store.service';
 import { CommonModule } from '@angular/common';
 import { Note } from '../../../core/models/note.model';
-import { not } from 'rxjs/internal/util/not';
+
+import { inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Observable, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-notes-sidebar',
@@ -12,24 +16,31 @@ import { not } from 'rxjs/internal/util/not';
   imports: [CommonModule],
 })
 export class NotesSidebarComponent implements OnInit {
-  notes: Note[] = [];
-  selectedNoteTitle: string | null = null;
+  private readonly route = inject(ActivatedRoute);
 
   constructor(private notesStore: NotesStoreService) {}
 
   ngOnInit(): void {
-    this.notesStore.notesList$.subscribe((notes) => {
-      this.notes = notes;
-    });
-    this.notesStore.selectedNoteTitle$.subscribe((title) => {
-      this.selectedNoteTitle = title;
-    });
     this.notesStore.loadAllNotes();
     this.notesStore.loadSelectedNote();
-  }
 
-  selectNote(title: string): void {
-    this.notesStore.selectNote(title);
+    const titleFromUrl = this.route.snapshot.paramMap.get('title');
+
+    const notes = this.notesStore.notesList$();
+    const selectedNoteTitle = this.notesStore.selectedNoteTitle$();
+
+    let newTitle = '';
+
+    if (!titleFromUrl && !selectedNoteTitle) {
+      newTitle = notes[0]?.title || '';
+    } else if (!titleFromUrl && selectedNoteTitle) {
+      newTitle = selectedNoteTitle;
+    } else if (titleFromUrl) {
+      newTitle = titleFromUrl;
+    }
+
+    this.notesStore.selectNote(newTitle);
+    this.selectNewNote(newTitle);
   }
 
   async addNewNote(position: 'start' | 'end' | number = 'end'): Promise<void> {
@@ -48,7 +59,7 @@ export class NotesSidebarComponent implements OnInit {
     }
   }
 
-  async updateSelectedNote(title: string): Promise<void> {
+  async selectNewNote(title: string): Promise<void> {
     try {
       await this.notesStore.selectNote(title);
       console.log(`Selected note updated to: ${title}`);

@@ -10,8 +10,8 @@
   <!-- If there are notes, display them -->
   <ul *ngIf="notes.length > 0">
     <li
-      *ngFor="let note of notes; let i = index"
-      (click)="selectNote(note.title)"
+      *ngFor="let note of notesStore.notesList$(); let i = index"
+      (click)="selectNewNote(note.title)"
     >
       <span>{{ i + 1 }}. {{ note.title }}</span>
     </li>

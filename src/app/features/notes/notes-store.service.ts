@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, signal, computed, effect } from '@angular/core';
 import { PersistanceService } from '../../core/services/persistance.service';
 import { Note } from '../../core/models/note.model';
 
@@ -7,41 +6,30 @@ import { Note } from '../../core/models/note.model';
   providedIn: 'root',
 })
 export class NotesStoreService {
-  private notesListSubject = new BehaviorSubject<Note[]>([]);
-  private selectedNoteTitleSubject = new BehaviorSubject<string | null>(null);
+  private notesList = signal<Note[]>([]);
+  private selectedNoteTitle = signal<string | null>(null);
 
   constructor(private persistanceService: PersistanceService) {}
 
-  get notesList$(): Observable<Note[]> {
-    return this.notesListSubject.asObservable();
-  }
+  notesList$ = computed(() => this.notesList());
+  selectedNoteTitle$ = computed(() => this.selectedNoteTitle());
 
-  get selectedNoteTitle$(): Observable<string | null> {
-    return this.selectedNoteTitleSubject.asObservable();
-  }
-
-  async addDefaultNote(): Promise<void> {
-    const defaultNote: Omit<Note, 'index'> = {
-      title: 'Default Note',
-      content: 'This is the default note content.',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    await this.persistanceService.addNote(defaultNote, 'start');
-    await this.loadAllNotes();
+  private isValidTitle(title: string): boolean {
+    const regex = /^[a-zA-Z-_]+$/;
+    return regex.test(title);
   }
 
   async loadAllNotes(): Promise<void> {
     const notes = await this.persistanceService.getSortedNotes();
-    if (notes.length === 0) this.addNewNote();
-
-    this.notesListSubject.next(notes);
+    if (notes.length === 0) {
+      await this.addNewNote();
+    }
+    this.notesList.set(notes);
   }
 
   async addNewNote(position: 'start' | 'end' | number = 'end'): Promise<void> {
     const newNote: Omit<Note, 'index'> = {
-      title: `Note ${Date.now()}`,
+      title: `Note-${Date.now()}`,
       content: 'This is the content of the new note.',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -52,6 +40,11 @@ export class NotesStoreService {
   }
 
   async updateNote(note: Note): Promise<void> {
+    if (!this.isValidTitle(note.title)) {
+      throw new Error(
+        `A note with the title "${note.title}" contains forbidden characters`
+      );
+    }
     await this.persistanceService.updateNote(note);
     await this.loadAllNotes();
   }
@@ -66,14 +59,14 @@ export class NotesStoreService {
   }
 
   async selectNote(title: string): Promise<void> {
-    this.selectedNoteTitleSubject.next(title);
+    this.selectedNoteTitle.set(title);
     await this.persistanceService.setSelectedNote(title);
   }
 
   async loadSelectedNote(): Promise<void> {
     try {
       const selectedNote = await this.persistanceService.getSelectedNote();
-      this.selectedNoteTitleSubject.next(selectedNote);
+      this.selectedNoteTitle.set(selectedNote);
     } catch (error) {
       console.error('Error fetching selected note:', error);
     }
