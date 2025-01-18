@@ -1,13 +1,8 @@
-import { Component, OnInit, computed } from '@angular/core';
-import { NoteSummary } from '../../../core/models/note-summary.model';
-import { map } from 'rxjs/operators';
+import { Component, OnInit, inject } from '@angular/core';
 import { NotesStoreService } from '../notes-store.service';
 import { CommonModule } from '@angular/common';
-import { Note } from '../../../core/models/note.model';
-
-import { inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, switchMap } from 'rxjs';
+import { Note } from '../../../core/models/note.model';
 
 @Component({
   selector: 'app-notes-sidebar',
@@ -17,30 +12,14 @@ import { Observable, switchMap } from 'rxjs';
 })
 export class NotesSidebarComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
-
-  constructor(private notesStore: NotesStoreService) {}
+  notesStore = inject(NotesStoreService);
 
   ngOnInit(): void {
-    this.notesStore.loadAllNotes();
-    this.notesStore.loadSelectedNote();
-
     const titleFromUrl = this.route.snapshot.paramMap.get('title');
 
-    const notes = this.notesStore.notesList$();
-    const selectedNoteTitle = this.notesStore.selectedNoteTitle$();
-
-    let newTitle = '';
-
-    if (!titleFromUrl && !selectedNoteTitle) {
-      newTitle = notes[0]?.title || '';
-    } else if (!titleFromUrl && selectedNoteTitle) {
-      newTitle = selectedNoteTitle;
-    } else if (titleFromUrl) {
-      newTitle = titleFromUrl;
+    if (titleFromUrl) {
+      this.notesStore.selectNote(titleFromUrl);
     }
-
-    this.notesStore.selectNote(newTitle);
-    this.selectNewNote(newTitle);
   }
 
   async addNewNote(position: 'start' | 'end' | number = 'end'): Promise<void> {

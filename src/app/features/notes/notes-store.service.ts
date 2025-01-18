@@ -1,6 +1,7 @@
-import { Injectable, signal, computed, effect } from '@angular/core';
+import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import { PersistanceService } from '../../core/services/persistance.service';
 import { Note } from '../../core/models/note.model';
+import { find } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -8,23 +9,68 @@ import { Note } from '../../core/models/note.model';
 export class NotesStoreService {
   private notesList = signal<Note[]>([]);
   private selectedNoteTitle = signal<string | null>(null);
-
-  constructor(private persistanceService: PersistanceService) {}
+  private selectedNote = signal<Note | null>(null);
 
   notesList$ = computed(() => this.notesList());
   selectedNoteTitle$ = computed(() => this.selectedNoteTitle());
+  selectedNote$ = computed(() => this.selectedNote());
+
+  persistanceService = inject(PersistanceService);
+
+  constructor() {
+    effect(() => {
+      this.initializeStore();
+    });
+  }
+
+  private async initializeStore(): Promise<void> {
+    await this.loadAllNotes();
+    await this.loadSelectedNoteTitle();
+
+    if (!this.selectedNoteTitle() && this.notesList().length > 0) {
+      this.selectNote(this.notesList()[0].title);
+    }
+    await this.loadSelectedNote();
+  }
 
   private isValidTitle(title: string): boolean {
-    const regex = /^[a-zA-Z-_]+$/;
+    const regex = /^[a-zA-Z0-9-_]+$/;
     return regex.test(title);
   }
 
-  async loadAllNotes(): Promise<void> {
-    const notes = await this.persistanceService.getSortedNotes();
-    if (notes.length === 0) {
-      await this.addNewNote();
+  private async loadAllNotes(): Promise<void> {
+    try {
+      const notes = await this.persistanceService.getSortedNotes();
+      if (notes.length === 0) {
+        await this.addNewNote();
+      } else {
+        this.notesList.set(notes);
+      }
+    } catch (error) {
+      console.error('Error loading all notes:', error);
     }
-    this.notesList.set(notes);
+  }
+
+  private async loadSelectedNoteTitle(): Promise<void> {
+    try {
+      const selectedNoteTitle = await this.persistanceService.getSelectedNote();
+      this.selectedNoteTitle.set(selectedNoteTitle);
+    } catch (error) {
+      console.error('Error loading selected note:', error);
+    }
+  }
+
+  // This function has to be executed after loading selected note settings and all notes list
+  // TODO: Prevent executing this function before loading mentioned values
+  private async loadSelectedNote(): Promise<void> {
+    try {
+      const note = this.notesList().find(
+        (note) => note.title === this.selectedNoteTitle()
+      );
+      this.selectedNote.set(note || null);
+    } catch (error) {
+      console.error('Error loading selected note:', error);
+    }
   }
 
   async addNewNote(position: 'start' | 'end' | number = 'end'): Promise<void> {
@@ -54,21 +100,12 @@ export class NotesStoreService {
       await this.persistanceService.reorderNote(title, index);
       await this.loadAllNotes();
     } catch (error) {
-      console.error(error);
+      console.error('Error moving note:', error);
     }
   }
 
   async selectNote(title: string): Promise<void> {
     this.selectedNoteTitle.set(title);
     await this.persistanceService.setSelectedNote(title);
-  }
-
-  async loadSelectedNote(): Promise<void> {
-    try {
-      const selectedNote = await this.persistanceService.getSelectedNote();
-      this.selectedNoteTitle.set(selectedNote);
-    } catch (error) {
-      console.error('Error fetching selected note:', error);
-    }
   }
 }
