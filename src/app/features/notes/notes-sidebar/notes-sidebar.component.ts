@@ -21,7 +21,6 @@ export class NotesSidebarComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   notesStore = inject(NotesStoreService);
-  selectedNoteTitleFromDb = input();
   titleFromUrl = signal<string | null>(null);
 
   constructor() {
@@ -30,11 +29,12 @@ export class NotesSidebarComponent implements OnInit {
       this.titleFromUrl.set(title);
     });
     effect(() => {
-      const titleFromDb = this.selectedNoteTitleFromDb();
+      const titleFromDb = this.notesStore.selectedNoteTitle$();
+
       if (this.titleFromUrl() !== null) {
         this.notesStore.selectNote(this.titleFromUrl() as string);
       }
-      if (titleFromDb && !this.titleFromUrl) {
+      if (titleFromDb && !this.titleFromUrl()) {
         this.router.navigate(['/notes', titleFromDb]);
       }
     });
