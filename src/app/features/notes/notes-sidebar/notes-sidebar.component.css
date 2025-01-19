@@ -27,9 +27,39 @@
 .note-titles-list__item {
   background-color: var(--color-secondary);
   margin: 0.2rem;
-  padding: 0.2rem 0.8rem;
+  padding: 0.2rem 0.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.note-titles-list__text {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 12rem;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .note-titles-list__item--selected {
   background-color: var(--color-secondary-darker);
+}
+.note-titles-list__button-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 0.5rem;
+}
+.icon-button {
+  margin: auto 0.2rem auto 0;
+  padding: 0;
+  height: 22px;
+  background-color: transparent;
+  color: none;
+}
+
+.icon-button__icon {
+  margin: 0;
+  fill: var(--color-text-primary);
 }

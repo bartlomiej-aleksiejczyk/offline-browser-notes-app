@@ -1,16 +1,8 @@
-import {
-  Component,
-  OnInit,
-  effect,
-  inject,
-  input,
-  signal,
-} from '@angular/core';
+import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import { NotesStoreService } from '../notes-store.service';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Note } from '../../../core/models/note.model';
-
 @Component({
   selector: 'app-notes-sidebar',
   templateUrl: './notes-sidebar.component.html',
@@ -68,6 +60,15 @@ export class NotesSidebarComponent implements OnInit {
       this.router.navigate(['/notes', title]);
     } catch (error) {
       console.error('Error updating selected note:', error);
+    }
+  }
+  async deleteNote(title: string): Promise<void> {
+    try {
+      if (confirm('Are you sure to delete note named: ' + title)) {
+        await this.notesStore.deleteNote(title);
+      }
+    } catch (error) {
+      console.error('Error deleting selected note:', error);
     }
   }
 }

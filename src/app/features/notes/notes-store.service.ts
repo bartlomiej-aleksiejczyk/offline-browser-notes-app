@@ -109,4 +109,13 @@ export class NotesStoreService {
     await this.persistanceService.setSelectedNote(title);
     await this.loadSelectedNote();
   }
+
+  async deleteNote(title: string): Promise<void> {
+    try {
+      await this.persistanceService.deleteNote(title);
+      await this.loadAllNotes();
+    } catch (error) {
+      console.error('Error deleting note:', error);
+    }
+  }
 }
