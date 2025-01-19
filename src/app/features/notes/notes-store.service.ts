@@ -107,5 +107,6 @@ export class NotesStoreService {
   async selectNote(title: string): Promise<void> {
     this.selectedNoteTitle.set(title);
     await this.persistanceService.setSelectedNote(title);
+    await this.loadSelectedNote();
   }
 }
