@@ -1,0 +1,22 @@
+.notes-display__header {
+  padding: 1rem 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+.notes-display__content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  flex: 1;
+  align-self: stretch;
+}
+.notes-display__textarea {
+  padding: 10px;
+  overflow-y: hidden;
+  white-space: pre;
+  outline: none;
+  &:focus {
+    outline-color: none;
+  }
+}

@@ -1,10 +1,17 @@
-<div class="note-content">
-  @if (notesStore.selectedNote$()) {
+@if (notesStore.selectedNote$()) {
+<div class="notes-display__header">
   <h3>{{ notesStore.selectedNote$()?.title }}</h3>
-  <div>
-    <textarea [(ngModel)]="noteContent"></textarea>
-  </div>
-  } @else {
-  <p>Note with this name not found</p>
-  }
 </div>
+<div class="notes-display__content">
+  <textarea
+    cdkTextareaAutosize
+    #autosize="cdkTextareaAutosize"
+    wrap="off"
+    cdkAutosizeMinRows="50"
+    [(ngModel)]="noteContent"
+    class="notes-display__textarea"
+  ></textarea>
+</div>
+} @else {
+<p>Note with this name not found</p>
+}

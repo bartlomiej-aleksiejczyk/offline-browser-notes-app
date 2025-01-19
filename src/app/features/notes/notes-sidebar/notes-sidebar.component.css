@@ -1,0 +1,35 @@
+.new-note-button {
+  background-color: var(--color-primary);
+  border: none;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 1rem;
+  font-size: 1.1em;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  color: var(--color-text-on-primary);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--color-primary-lighter);
+  }
+  &:active {
+    transform: translateY(2px);
+  }
+}
+
+.note-titles-list {
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.note-titles-list__item {
+  background-color: var(--color-secondary);
+  margin: 0.2rem;
+  padding: 0.2rem 0.8rem;
+}
+
+.note-titles-list__item--selected {
+  background-color: var(--color-secondary-darker);
+}

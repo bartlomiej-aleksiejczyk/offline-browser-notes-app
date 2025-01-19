@@ -1,16 +1,18 @@
-<div class="notes-container">
-  <h2>Notes</h2>
-  <button (click)="addNewNote()">Add New Note</button>
-  @if (notesStore.notesList$().length > 0) {
-  <ul>
-    @for (note of notesStore.notesList$(); let i = $index; track note.title) {
-    <li (click)="selectNewNote(note.title)">
-      <span>
-        {{ i + 1 }}. @if (note.title ==
-        notesStore.selectedNoteTitle$()){[selected]} {{ note.title }}</span
-      >
-    </li>
-    }
-  </ul>
+<h2>Notes</h2>
+<button class="new-note-button" (click)="addNewNote()">Add New Note</button>
+@if (notesStore.notesList$().length > 0) {
+<div class="note-titles-list">
+  @for (note of notesStore.notesList$(); let i = $index; track note.title) {
+  <div
+    [ngClass]="{
+      'note-titles-list__item--selected':
+        note.title == notesStore.selectedNoteTitle$()
+    }"
+    class="note-titles-list__item"
+    (click)="selectNewNote(note.title)"
+  >
+    <span> {{ note.title }}</span>
+  </div>
   }
 </div>
+}

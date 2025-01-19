@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NotesStoreService } from '../notes-store.service';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 @Component({
-  imports: [FormsModule],
+  imports: [FormsModule, TextFieldModule],
   selector: 'app-note-display',
   templateUrl: './note-display.component.html',
   styleUrls: ['./note-display.component.css'],
