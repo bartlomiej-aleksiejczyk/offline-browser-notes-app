@@ -1,7 +1,14 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { NotesStoreService } from '../notes-store.service';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Note } from '../../../core/models/note.model';
 
 @Component({
@@ -12,10 +19,28 @@ import { Note } from '../../../core/models/note.model';
 })
 export class NotesSidebarComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   notesStore = inject(NotesStoreService);
+  selectedNoteTitleFromDb = input();
+  titleFromUrl = signal<string | null>(null);
 
+  constructor() {
+    this.route.paramMap.subscribe((paramMap) => {
+      const title = paramMap.get('title');
+      this.titleFromUrl.set(title);
+    });
+    effect(() => {
+      const titleFromDb = this.selectedNoteTitleFromDb();
+      if (this.titleFromUrl() !== null) {
+        this.notesStore.selectNote(this.titleFromUrl() as string);
+      }
+      if (titleFromDb && !this.titleFromUrl) {
+        this.router.navigate(['/notes', titleFromDb]);
+      }
+    });
+  }
   ngOnInit(): void {
-    const titleFromUrl = this.route.snapshot.paramMap.get('title');
+    const titleFromUrl = this.titleFromUrl();
 
     if (titleFromUrl) {
       this.notesStore.selectNote(titleFromUrl);
@@ -40,8 +65,7 @@ export class NotesSidebarComponent implements OnInit {
 
   async selectNewNote(title: string): Promise<void> {
     try {
-      await this.notesStore.selectNote(title);
-      console.log(`Selected note updated to: ${title}`);
+      this.router.navigate(['/notes', title]);
     } catch (error) {
       console.error('Error updating selected note:', error);
     }
