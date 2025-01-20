@@ -1,13 +1,25 @@
-import { Component, input, model, output } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  ViewChild,
+  OnInit,
+  input,
+  model,
+  output,
+} from '@angular/core';
+import { A11yModule } from '@angular/cdk/a11y';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-note-rename-modal',
-  imports: [FormsModule],
+  imports: [FormsModule, A11yModule],
   templateUrl: './note-rename-modal.component.html',
   styleUrl: './note-rename-modal.component.css',
 })
-export class NoteRenameModalComponent {
+export class NoteRenameModalComponent implements OnInit, AfterViewInit {
+  @ViewChild('nameInput') nameInput!: ElementRef<HTMLInputElement>;
+
   oldName = input.required<string>();
   newName = model<string>('');
   onNameChangeAccept = output<{ oldTitle: string; newTitle: string }>();
@@ -15,6 +27,11 @@ export class NoteRenameModalComponent {
 
   ngOnInit() {
     this.newName.set(this.oldName());
+  }
+
+  ngAfterViewInit() {
+    // Set focus on the input element when the component has fully initialized
+    this.nameInput.nativeElement.focus();
   }
 
   onAccept() {

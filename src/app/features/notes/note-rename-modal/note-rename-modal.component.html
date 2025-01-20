@@ -1,7 +1,14 @@
 <div id="my-popover-{{ newName() }}" popover class="modal">
   <div class="modal-content">
     <h2>Rename</h2>
-    <input type="text" [(ngModel)]="newName" placeholder="Enter new name" />
+    <input
+      #nameInput
+      type="text"
+      [(ngModel)]="newName"
+      cdkTrapFocus
+      [cdkTrapFocusAutoCapture]="true"
+      placeholder="Enter new name"
+    />
     <div class="modal-actions">
       <button (click)="onAccept()">Accept</button>
       <button (click)="onCancel()">Cancel</button>
