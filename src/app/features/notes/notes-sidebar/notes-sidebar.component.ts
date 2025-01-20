@@ -13,6 +13,7 @@ export class NotesSidebarComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   notesStore = inject(NotesStoreService);
+  editedTitleName = signal<string | null>(null);
   titleFromUrl = signal<string | null>(null);
 
   constructor() {
