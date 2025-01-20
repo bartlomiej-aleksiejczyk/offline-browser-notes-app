@@ -35,6 +35,9 @@
   --color-help: #d7c8f5;
   --color-help-darker: #8f76cf;
 
+  --color-main-text-area: #ffffff;
+  --color-main-text: #000000;
+
   /* ================= */
   /* Global Properties */
 
@@ -84,5 +87,8 @@
 
     --color-help: #595085;
     --color-help-darker: #3c3357;
+
+    --color-main-text-area: #252525;
+    --color-main-text: #ffffff;
   }
 }
