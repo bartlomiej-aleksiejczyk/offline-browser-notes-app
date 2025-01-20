@@ -94,7 +94,7 @@ export class NotesSidebarComponent implements OnInit {
 
     await this.notesStore.deleteNote(oldNote.title);
     await this.notesStore.updateNote(renamedNote);
-    if (this.titleFromUrl() === event.newTitle) {
+    if (this.titleFromUrl() === event.oldTitle) {
       this.router.navigate(['/notes', event.newTitle]);
     }
   }
