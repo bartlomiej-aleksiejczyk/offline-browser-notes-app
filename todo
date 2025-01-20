@@ -1,3 +1,6 @@
-Use new template syntax
-Use signals instead of rxjs
-Use new injection syntax
+* fix wrong name problem
+* fix wrong input problem
+* Add top container for title and buttons
+* add responsive layout
+* add error handling for modal
+* add error handlign for display field
