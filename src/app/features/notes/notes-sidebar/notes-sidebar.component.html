@@ -9,9 +9,13 @@
     }"
     class="note-titles-list__item"
   >
-    <span class="note-titles-list__text" (click)="selectNewNote(note.title)">
-      {{ note.title }}</span
+    <div
+      class="note-titles-list__select-button"
+      (click)="selectNewNote(note.title)"
     >
+      <span class="note-titles-list__text"> {{ note.title }}</span>
+    </div>
+
     <div class="note-titles-list__button-area">
       <button class="icon-button" (click)="deleteNote(note.title)">
         <svg
