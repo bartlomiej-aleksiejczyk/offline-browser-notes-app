@@ -1,7 +1,5 @@
-import { Component, inject, input, model, output, signal } from '@angular/core';
+import { Component, input, model, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { NotesStoreService } from '../notes-store.service';
 
 @Component({
   selector: 'app-note-rename-modal',
@@ -10,11 +8,9 @@ import { NotesStoreService } from '../notes-store.service';
   styleUrl: './note-rename-modal.component.css',
 })
 export class NoteRenameModalComponent {
-  private readonly router = inject(Router);
-  notesStore = inject(NotesStoreService);
   oldName = input.required<string>();
   newName = model<string>('');
-  onNameChangeAccept = output<string>();
+  onNameChangeAccept = output<{ oldTitle: string; newTitle: string }>();
   onNameChangeCancel = output<void>();
 
   ngOnInit() {
@@ -22,11 +18,14 @@ export class NoteRenameModalComponent {
   }
 
   onAccept() {
-    this.onNameChangeAccept.emit(this.newName());
+    this.onNameChangeAccept.emit({
+      oldTitle: this.oldName(),
+      newTitle: this.newName(),
+    });
   }
 
   onCancel() {
-    this.newName.set(this.oldName())
+    this.newName.set(this.oldName());
     this.onNameChangeCancel.emit();
   }
 }

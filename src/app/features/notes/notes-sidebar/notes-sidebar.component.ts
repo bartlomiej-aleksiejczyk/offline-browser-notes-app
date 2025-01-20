@@ -3,11 +3,12 @@ import { NotesStoreService } from '../notes-store.service';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Note } from '../../../core/models/note.model';
+import { NoteRenameModalComponent } from '../note-rename-modal/note-rename-modal.component';
 @Component({
   selector: 'app-notes-sidebar',
   templateUrl: './notes-sidebar.component.html',
   styleUrls: ['./notes-sidebar.component.css'],
-  imports: [CommonModule],
+  imports: [CommonModule, NoteRenameModalComponent],
 })
 export class NotesSidebarComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
@@ -70,6 +71,31 @@ export class NotesSidebarComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error deleting selected note:', error);
+    }
+  }
+
+  updateEditedTitleName(title: string) {
+    this.editedTitleName.set(title);
+  }
+
+  clearEditedTitleName() {
+    this.editedTitleName.set(null);
+  }
+
+  async renameNote(event: { oldTitle: string; newTitle: string }) {
+    this.editedTitleName.set(null);
+    const notes = this.notesStore.notesList$();
+    const oldNote = notes.find((note) => note.title === event.oldTitle);
+
+    if (!oldNote) {
+      throw new Error('Unknown error when renaming note');
+    }
+    const renamedNote = { ...oldNote, title: event.newTitle };
+
+    await this.notesStore.deleteNote(oldNote.title);
+    await this.notesStore.updateNote(renamedNote);
+    if (this.titleFromUrl() === event.newTitle) {
+      this.router.navigate(['/notes', event.newTitle]);
     }
   }
 }

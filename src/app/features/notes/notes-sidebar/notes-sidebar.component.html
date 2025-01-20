@@ -28,7 +28,7 @@
           />
         </svg>
       </button>
-      <button class="icon-button">
+      <button class="icon-button" (click)="updateEditedTitleName(note.title)">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           height="18px"
@@ -46,4 +46,10 @@
   </div>
   }
 </div>
+} @if (editedTitleName() !== null){
+<app-note-rename-modal
+  [oldName]="$any(editedTitleName())"
+  (onNameChangeAccept)="renameNote($event)"
+  (onNameChangeCancel)="clearEditedTitleName()"
+/>
 }
