@@ -91,9 +91,9 @@ export class NotesSidebarComponent implements OnInit {
       throw new Error('Unknown error when renaming note');
     }
     const renamedNote = { ...oldNote, title: event.newTitle };
-
-    await this.notesStore.deleteNote(oldNote.title);
+    // TODO: Add graceful fail when wrong title
     await this.notesStore.updateNote(renamedNote);
+    await this.notesStore.deleteNote(oldNote.title);
     if (this.titleFromUrl() === event.oldTitle) {
       this.router.navigate(['/notes', event.newTitle]);
     }
