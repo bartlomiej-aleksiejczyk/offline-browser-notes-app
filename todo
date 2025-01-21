@@ -5,3 +5,4 @@
 * add error handling for modal
 * add error handlign for display field
 * fix layoput to be more vs code like - remove right and bottom border
+* Add escape, enter, click outside response for a modal
