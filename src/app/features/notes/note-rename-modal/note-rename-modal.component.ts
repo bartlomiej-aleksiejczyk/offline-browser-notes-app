@@ -30,7 +30,6 @@ export class NoteRenameModalComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Set focus on the input element when the component has fully initialized
     this.nameInput.nativeElement.focus();
   }
 
