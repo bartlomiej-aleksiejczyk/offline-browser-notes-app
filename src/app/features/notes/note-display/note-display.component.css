@@ -2,9 +2,12 @@
   padding: 1rem 1rem 0;
   display: flex;
   justify-content: center;
+  background-color: var(--color-main-text-area);
+  color: var(--color-main-text);
+  border: none;
 }
 .notes-display__content {
-  padding: 1rem;
+  margin: 0;
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -13,12 +16,16 @@
 }
 .notes-display__textarea {
   padding: 10px;
-  overflow-y: hidden;
+  overflow: auto;
+  resize: none;
   white-space: pre;
   outline: none;
   background-color: var(--color-main-text-area);
   color: var(--color-main-text);
-  border: 2px solid #4b4b4b;
+  border: none;
+  margin: 0;
+  justify-content: start;
+  flex: 1;
   &:focus {
     outline-color: none;
   }
