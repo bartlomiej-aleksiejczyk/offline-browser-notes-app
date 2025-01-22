@@ -6,12 +6,18 @@ import { NotesPage } from '../../core/models/notes-page.model';
 import { Note } from '../../core/models/note.model';
 import { NotesSidebarComponent } from './notes-sidebar/notes-sidebar.component';
 import { NoteDisplayComponent } from './note-display/note-display.component';
+import { MainNavbarComponent } from './main-navbar/main-navbar.component';
 
 @Component({
   selector: 'app-notes',
   templateUrl: './notes.component.html',
   styleUrl: './notes.component.css',
   host: { class: 'notes-wrapper' },
-  imports: [CommonModule, NotesSidebarComponent, NoteDisplayComponent],
+  imports: [
+    CommonModule,
+    NotesSidebarComponent,
+    NoteDisplayComponent,
+    MainNavbarComponent,
+  ],
 })
 export class NotesComponent {}
