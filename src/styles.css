@@ -29,3 +29,27 @@ app-root {
   flex-direction: column;
   flex-grow: 1;
 }
+
+.button {
+  &:hover {
+    box-shadow: inset 0 0 0 2px var(--color-primary-darker);
+  }
+  &:active {
+    transform: translateY(2px);
+  }
+  &:focus {
+    outline-offset: -0.25rem;
+    outline: 1px dashed var(--color-text-on-primary);
+  }
+  font-family: inherit;
+  padding: 0.5rem;
+  margin: calc(1rem + 2px);
+  background-color: var(--color-primary-lighter);
+  color: var(--color-text-on-primary);
+  font-weight: bold;
+  font-size: large;
+  letter-spacing: 0.1em;
+  transition: all 0.3s ease;
+  border: solid 2px var(--color-primary-darker);
+  align-self: stretch;
+}

@@ -1,4 +1,4 @@
-<button class="new-note-button" (click)="addNewNote()">Add New Note</button>
+<button class="button" (click)="addNewNote()">Add New Note</button>
 @if (notesStore.notesList$().length > 0) {
 <div class="note-titles-list">
   @for (note of notesStore.notesList$(); let i = $index; track note.title) {

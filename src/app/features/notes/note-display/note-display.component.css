@@ -1,5 +1,5 @@
 .notes-display__header {
-  padding: 1rem 1rem 0;
+  padding: 1.25rem 1rem 1.5rem;
   display: flex;
   justify-content: center;
   background-color: var(--color-main-text-area);
@@ -14,8 +14,20 @@
   flex: 1;
   align-self: stretch;
 }
+.notes-display__no-content {
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  align-self: stretch;
+  text-align: center;
+}
+.notes-display__information {
+  padding: 2rem 4rem;
+  background-color: var(--color-main-text-area);
+}
 .notes-display__textarea {
-  padding: 10px;
+  padding-left: 3rem;
   overflow: auto;
   resize: none;
   white-space: pre;
