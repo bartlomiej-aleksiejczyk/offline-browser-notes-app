@@ -41,6 +41,7 @@ app-root {
     outline-offset: -0.25rem;
     outline: 1px dashed var(--color-text-on-primary);
   }
+  cursor: pointer;
   font-family: inherit;
   padding: 0.5rem;
   margin: calc(1rem + 2px);

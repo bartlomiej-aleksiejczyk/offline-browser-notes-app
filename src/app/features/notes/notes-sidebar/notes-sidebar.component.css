@@ -8,6 +8,7 @@
 .note-titles-list__select-button {
   display: flex;
   flex-grow: 1;
+  cursor: pointer;
   &:hover {
     text-decoration: underline;
   }
@@ -22,8 +23,9 @@
   }
 }
 .note-titles-list__item {
-  cursor: pointer;
   background-color: var(--color-secondary);
+  color: var(--color-main-text);
+
   margin: 0.2rem;
   padding: 0.2rem 0.5rem;
   display: flex;
@@ -40,6 +42,7 @@
   margin-left: 0.5rem;
 }
 .icon-button {
+  cursor: pointer;
   margin: auto 0.2rem auto 0;
   padding: 0;
   height: 22px;
