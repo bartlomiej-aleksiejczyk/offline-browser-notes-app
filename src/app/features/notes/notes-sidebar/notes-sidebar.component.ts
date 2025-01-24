@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Note } from '../../../core/models/note.model';
 import { NoteRenameModalComponent } from '../note-rename-modal/note-rename-modal.component';
+import { DevicePreferencesService } from '../../../core/services/device-preferences.service';
 @Component({
   selector: 'app-notes-sidebar',
   templateUrl: './notes-sidebar.component.html',
@@ -14,6 +15,7 @@ export class NotesSidebarComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   notesStore = inject(NotesStoreService);
+  devicePreferencesService = inject(DevicePreferencesService);
   editedTitleName = signal<string | null>(null);
   titleFromUrl = signal<string | null>(null);
 
@@ -23,16 +25,20 @@ export class NotesSidebarComponent implements OnInit {
       this.titleFromUrl.set(title);
     });
     effect(() => {
-      const titleFromDb = this.notesStore.selectedNoteTitle$();
+      if (!this.devicePreferencesService.isMobile()) {
 
-      if (this.titleFromUrl() !== null) {
-        this.notesStore.selectNote(this.titleFromUrl() as string);
+        const titleFromDb = this.notesStore.selectedNoteTitle$();
+
+        if (this.titleFromUrl() !== null) {
+          this.notesStore.selectNote(this.titleFromUrl() as string);
+        }
+        if (titleFromDb && !this.titleFromUrl()) {
+          this.router.navigate(['/notes', titleFromDb]);
+        }
       }
-      if (titleFromDb && !this.titleFromUrl()) {
-        this.router.navigate(['/notes', titleFromDb]);
-      }
-    });
+    })
   }
+
   ngOnInit(): void {
     const titleFromUrl = this.titleFromUrl();
 

@@ -1,5 +1,5 @@
 .note-titles-list {
-  padding: 1rem;
+  padding: 0.5rem 1rem 1rem;
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -9,19 +9,23 @@
   display: flex;
   flex-grow: 1;
   cursor: pointer;
+
   &:hover {
     text-decoration: underline;
   }
 }
+
 .note-titles-list__text {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
   max-width: 12rem;
+
   &:hover {
     text-decoration: underline;
   }
 }
+
 .note-titles-list__item {
   background-color: var(--color-secondary);
   color: var(--color-main-text);
@@ -31,16 +35,19 @@
   display: flex;
   justify-content: space-between;
 }
+
 .note-titles-list__item--selected {
   background-color: var(--color-secondary-darker);
   outline: 2px solid var(--color-text-primary);
 }
+
 .note-titles-list__button-area {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-left: 0.5rem;
 }
+
 .icon-button {
   cursor: pointer;
   margin: auto 0.2rem auto 0;
@@ -48,9 +55,11 @@
   height: 22px;
   background-color: transparent;
   color: none;
+
   &:hover {
     background-color: var(--color-secondary-lighter);
   }
+
   &:active {
     transform: translateY(2px);
   }
@@ -59,4 +68,15 @@
 .icon-button__icon {
   margin: 0;
   fill: var(--color-text-primary);
+}
+
+.sidebar-button-wrapper {
+  margin: 0.5rem calc(1rem + 2px) 0;
+  flex-grow: 1;
+  align-self: stretch;
+  display: flex;
+  position: sticky;
+  padding: 1rem 0;
+  background-color: var(--color-background);
+  top: 0;
 }

@@ -6,6 +6,7 @@
   color: var(--color-main-text);
   border: none;
 }
+
 .notes-display__content {
   margin: 0;
   display: flex;
@@ -14,6 +15,7 @@
   flex: 1;
   align-self: stretch;
 }
+
 .notes-display__no-content {
   justify-content: center;
   display: flex;
@@ -22,10 +24,12 @@
   align-self: stretch;
   text-align: center;
 }
+
 .notes-display__information {
   padding: 2rem 4rem;
   background-color: var(--color-main-text-area);
 }
+
 .notes-display__textarea {
   padding-left: 3rem;
   overflow: auto;
@@ -38,6 +42,7 @@
   margin: 0;
   justify-content: start;
   flex: 1;
+
   &:focus {
     outline-color: none;
   }

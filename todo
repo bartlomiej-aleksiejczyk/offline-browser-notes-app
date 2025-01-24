@@ -1,8 +1,9 @@
 * fix wrong name problem
 * fix wrong input problem
-* Add top container for title and buttons
-* add responsive layout
 * add error handling for modal
 * add error handlign for display field
-* fix layoput to be more vs code like - remove right and bottom border
 * Add escape, enter, click outside response for a modal
+===
+* fix inproper signal usage in store and note display
+* wrap svgs in component
+* refine not auto creation and auto selection

@@ -10,6 +10,7 @@ body {
   font-family: "Courier New", Courier, monospace;
   line-height: 1.6;
 }
+
 html,
 body {
   min-height: 100vh;
@@ -24,6 +25,7 @@ app-root {
   flex-direction: row;
   flex-grow: 1;
 }
+
 .notes-wrapper {
   display: flex;
   flex-direction: column;
@@ -34,17 +36,19 @@ app-root {
   &:hover {
     box-shadow: inset 0 0 0 2px var(--color-primary-darker);
   }
+
   &:active {
     transform: translateY(2px);
   }
+
   &:focus {
     outline-offset: -0.25rem;
     outline: 1px dashed var(--color-text-on-primary);
   }
+
+  width: 100%;
   cursor: pointer;
   font-family: inherit;
-  padding: 0.5rem;
-  margin: calc(1rem + 2px);
   background-color: var(--color-primary-lighter);
   color: var(--color-text-on-primary);
   font-weight: bold;
@@ -53,4 +57,5 @@ app-root {
   transition: all 0.3s ease;
   border: solid 2px var(--color-primary-darker);
   align-self: stretch;
+  padding: 0.5rem 0;
 }

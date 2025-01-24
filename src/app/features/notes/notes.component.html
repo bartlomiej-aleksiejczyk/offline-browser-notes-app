@@ -1,4 +1,5 @@
-<div class="notes-layout">
-  <app-notes-sidebar class="notes-sidebar" />
+<div class="notes-layout" [ngClass]="{'notes-layout--mobile': 
+        devicePreferencesService.isMobile()}">
+  @if(!devicePreferencesService.isMobile()){<app-notes-sidebar class="notes-sidebar" />}
   <app-note-display class="notes-display" />
 </div>
