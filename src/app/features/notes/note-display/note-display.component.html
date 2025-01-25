@@ -1,11 +1,11 @@
-@if (notesStore.selectedNote$()) {
+@if (notesStore.getSelectedNote()) {
 <div class="notes-display__header">
-  <h3>{{ notesStore.selectedNote$()?.title }}</h3>
+  <h3>{{ notesStore.getSelectedNote()?.title }}</h3>
 </div>
 <div class="notes-display__content">
   <textarea
     wrap="off"
-    [(ngModel)]="noteContent"
+    [formControl]="textboxControl"
     class="notes-display__textarea"
   ></textarea>
 </div>
