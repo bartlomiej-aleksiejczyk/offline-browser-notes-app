@@ -1,7 +1,6 @@
-import { Injectable, signal, computed, effect, inject } from '@angular/core';
+import { Injectable, signal, effect, inject } from '@angular/core';
 import { PersistanceService } from '../../core/services/persistance.service';
 import { Note } from '../../core/models/note.model';
-import { find } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -10,17 +9,24 @@ export class NotesStoreService {
   private notesList = signal<Note[]>([]);
   private selectedNoteTitle = signal<string | null>(null);
   private selectedNote = signal<Note | null>(null);
-
-  notesList$ = computed(() => this.notesList());
-  selectedNoteTitle$ = computed(() => this.selectedNoteTitle());
-  selectedNote$ = computed(() => this.selectedNote());
-
-  persistanceService = inject(PersistanceService);
+  private readonly persistanceService = inject(PersistanceService);
 
   constructor() {
     effect(() => {
       this.initializeStore();
     });
+  }
+
+  getSelectedNoteTitle() {
+    return this.selectedNoteTitle();
+  }
+
+  getNotesList() {
+    return this.notesList();
+  }
+
+  getSelectedNote(): Note | null {
+    return this.selectedNote();
   }
 
   private async initializeStore(): Promise<void> {

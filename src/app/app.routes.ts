@@ -1,9 +1,21 @@
-import { Routes } from '@angular/router';
+import { Route, Routes } from '@angular/router';
 import { NotesComponent } from './features/notes/notes.component';
 import { NotesSidebarComponent } from './features/notes/notes-sidebar/notes-sidebar.component';
+export interface NamedRoute extends Route {
+  systemName: string;
+}
 
-export const routes: Routes = [
-  { path: 'notes/:title', component: NotesComponent },
-  { path: 'notes', component: NotesSidebarComponent },
-  { path: '', redirectTo: 'notes', pathMatch: 'full' },
+export const routes: NamedRoute[] = [
+  { path: 'notes/:title', component: NotesComponent, systemName: 'edit-note' },
+  {
+    path: 'notes',
+    component: NotesSidebarComponent,
+    systemName: 'browse-files-in-directory',
+  },
+  {
+    path: '',
+    redirectTo: 'notes',
+    pathMatch: 'full',
+    systemName: 'default-route-reditect',
+  },
 ];

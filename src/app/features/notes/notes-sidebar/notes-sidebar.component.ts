@@ -1,58 +1,24 @@
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { NotesStoreService } from '../notes-store.service';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Note } from '../../../core/models/note.model';
+import { Router } from '@angular/router';
 import { NoteRenameModalComponent } from '../note-rename-modal/note-rename-modal.component';
 import { DevicePreferencesService } from '../../../core/services/device-preferences.service';
+
 @Component({
   selector: 'app-notes-sidebar',
   templateUrl: './notes-sidebar.component.html',
   styleUrls: ['./notes-sidebar.component.css'],
   imports: [CommonModule, NoteRenameModalComponent],
 })
-export class NotesSidebarComponent implements OnInit {
-  private readonly route = inject(ActivatedRoute);
+export class NotesSidebarComponent {
   private readonly router = inject(Router);
   notesStore = inject(NotesStoreService);
   devicePreferencesService = inject(DevicePreferencesService);
   editedTitleName = signal<string | null>(null);
-  titleFromUrl = signal<string | null>(null);
-
-  constructor() {
-    this.route.paramMap.subscribe((paramMap) => {
-      const title = paramMap.get('title');
-      this.titleFromUrl.set(title);
-    });
-    effect(() => {
-      if (!this.devicePreferencesService.isMobile()) {
-
-        const titleFromDb = this.notesStore.selectedNoteTitle$();
-
-        if (this.titleFromUrl() !== null) {
-          this.notesStore.selectNote(this.titleFromUrl() as string);
-        }
-        if (titleFromDb && !this.titleFromUrl()) {
-          this.router.navigate(['/notes', titleFromDb]);
-        }
-      }
-    })
-  }
-
-  ngOnInit(): void {
-    const titleFromUrl = this.titleFromUrl();
-
-    if (titleFromUrl) {
-      this.notesStore.selectNote(titleFromUrl);
-    }
-  }
 
   async addNewNote(position: 'start' | 'end' | number = 'end'): Promise<void> {
     await this.notesStore.addNewNote(position);
-  }
-
-  async updateNote(note: Note): Promise<void> {
-    await this.notesStore.updateNote(note);
   }
 
   async moveNote(noteId: string, index: number) {
@@ -65,7 +31,11 @@ export class NotesSidebarComponent implements OnInit {
 
   async selectNewNote(title: string): Promise<void> {
     try {
-      this.router.navigate(['/notes', title]);
+      if (this.devicePreferencesService.isMobile()) {
+        this.notesStore.selectNote(title);
+      } else {
+        this.router.navigate(['/notes', title]);
+      }
     } catch (error) {
       console.error('Error updating selected note:', error);
     }
@@ -90,18 +60,19 @@ export class NotesSidebarComponent implements OnInit {
 
   async renameNote(event: { oldTitle: string; newTitle: string }) {
     this.editedTitleName.set(null);
-    const notes = this.notesStore.notesList$();
+    const notes = this.notesStore.getNotesList();
     const oldNote = notes.find((note) => note.title === event.oldTitle);
 
     if (!oldNote) {
       throw new Error('Unknown error when renaming note');
     }
     const renamedNote = { ...oldNote, title: event.newTitle };
-    // TODO: Add graceful fail when wrong title
+    // TODO: Add graceful fail when a wrong title error occurs
     await this.notesStore.updateNote(renamedNote);
     await this.notesStore.deleteNote(oldNote.title);
-    if (this.titleFromUrl() === event.oldTitle) {
-      this.router.navigate(['/notes', event.newTitle]);
+
+    if (this.notesStore.getSelectedNoteTitle() === event.oldTitle) {
+      await this.notesStore.selectNote(event.newTitle);
     }
   }
 }
