@@ -1,8 +1,7 @@
-import { effect, inject, Injectable, OnInit, signal } from '@angular/core';
+import { effect, inject, Injectable, signal } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { NotesStoreService } from '../../features/notes/notes-store.service';
 import { DevicePreferencesService } from './device-preferences.service';
-import { NavigationVariablesKey } from '../navigationVariables';
 import { routes } from '../../app.routes';
 import { filter, map } from 'rxjs';
 
@@ -36,7 +35,6 @@ export class SiteNavigationService {
         const route = routeSnapshot?.routeConfig as any;
         this.currentRouteName.set(route.systemName);
       });
-
     effect(() => {
       if (!this.devicePreferencesService.isMobile()) {
         const selectedNoteTitle = this.notesStore.getSelectedNoteTitle();

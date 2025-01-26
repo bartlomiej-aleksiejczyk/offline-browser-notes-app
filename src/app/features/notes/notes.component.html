@@ -4,6 +4,9 @@
 >
   @if(!devicePreferencesService.isMobile()){<app-notes-sidebar
     class="notes-sidebar"
-  />}
+  />} @if(isEditingDefaultNote()){
   <app-default-note-display class="notes-display" />
+  }@else {
+  <app-note-display class="notes-display" />
+  }
 </div>

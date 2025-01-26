@@ -1,6 +1,7 @@
 import { Injectable, signal, effect, inject } from '@angular/core';
 import { PersistanceService } from '../../core/services/persistance.service';
 import { Note } from '../../core/models/note.model';
+import { DEFAULT_NOTE_TITLE } from '../../core/navigationVariables';
 
 @Injectable({
   providedIn: 'root',
@@ -34,8 +35,8 @@ export class NotesStoreService {
     await this.loadAllNotes();
     await this.loadSelectedNoteTitle();
 
-    if (!this.selectedNoteTitle() && this.notesList().length > 0) {
-      this.selectNote(this.notesList()[0].title);
+    if (!this.selectedNoteTitle()) {
+      await this.selectDefaultNote();
     }
     await this.loadSelectedNote();
   }
@@ -49,11 +50,7 @@ export class NotesStoreService {
   private async loadAllNotes(): Promise<void> {
     try {
       const notes = await this.persistanceService.getSortedNotes();
-      if (notes.length === 0) {
-        await this.addNewNote();
-      } else {
-        this.notesList.set(notes);
-      }
+      this.notesList.set(notes);
     } catch (error) {
       console.error('Error loading all notes:', error);
     }
@@ -125,6 +122,11 @@ export class NotesStoreService {
     this.selectedNoteTitle.set(title);
     await this.persistanceService.setSelectedNote(title);
     await this.loadSelectedNote();
+  }
+
+  async selectDefaultNote(): Promise<void> {
+    this.selectedNoteTitle.set(DEFAULT_NOTE_TITLE);
+    await this.persistanceService.setSelectedNote(DEFAULT_NOTE_TITLE);
   }
 
   async deleteNote(title: string): Promise<void> {
