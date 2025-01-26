@@ -13,12 +13,10 @@ export class NotesStoreService {
 
   constructor() {
     effect(() => {
-      console.log(this.selectedNote())
-
+      console.log(this.selectedNote());
     });
     effect(() => {
       this.initializeStore();
-
     });
   }
 
@@ -50,6 +48,7 @@ export class NotesStoreService {
     return regex.test(title);
   }
 
+  //TODO: spearate initialization and stale cache refresh
   private async loadAllNotes(): Promise<void> {
     try {
       const notes = await this.persistanceService.getSortedNotes();
@@ -63,9 +62,16 @@ export class NotesStoreService {
     }
   }
 
+  private updateSelectedNote(notes: Note[]): void {
+    const note = this.notesList().find(
+      (note) => note.title === this.selectedNoteTitle()
+    );
+  }
+
   private async loadSelectedNoteTitle(): Promise<void> {
     try {
-      const selectedNoteTitle = await this.persistanceService.getSelectedNote();
+      const selectedNoteTitle =
+        await this.persistanceService.getSelectedNoteTitle();
       this.selectedNoteTitle.set(selectedNoteTitle);
     } catch (error) {
       console.error('Error loading selected note:', error);
@@ -105,6 +111,8 @@ export class NotesStoreService {
     }
     await this.persistanceService.updateNote(note);
     await this.loadAllNotes();
+    await this.loadSelectedNoteTitle();
+    await this.loadSelectedNote();
   }
 
   async moveNote(title: string, index: number): Promise<void> {

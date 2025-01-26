@@ -162,7 +162,7 @@ export class PersistanceService {
     await transaction.done;
   }
 
-  async getSelectedNote(): Promise<string | null> {
+  async getSelectedNoteTitle(): Promise<string | null> {
     await this.dbInitialized;
 
     return await this.db.get('settings', 'selectedNote');
