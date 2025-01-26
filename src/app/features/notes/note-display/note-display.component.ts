@@ -3,8 +3,8 @@ import {
   OnDestroy,
   OnInit,
   computed,
+  effect,
   inject,
-  input,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NotesStoreService } from '../notes-store.service';
@@ -27,21 +27,28 @@ export class NoteDisplayComponent implements OnInit, OnDestroy {
   private syncInterval: Subscription | null = null;
   private inputSubscription: Subscription | null = null;
   textboxControl = new FormControl('');
-
-  ngOnInit(): void {
+  constructor() {
+    effect(() => {
+      const latestState = this.notesStore.getSelectedNote()?.content || this.state;
+      this.state = latestState;
+      this.textboxControl.setValue(this.state, { emitEvent: false });
+    })
+  }
+  async ngOnInit(): Promise<void> {
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
 
-    this.syncState();
+    // await this.syncState();
+
 
     this.inputSubscription = this.textboxControl.valueChanges
       .pipe(
         debounceTime(500),
-        tap((value) => {
+        tap(async (value) => {
           const selectedNote = this.notesStore.getSelectedNote();
           if (!value || !selectedNote) return;
           console.log('Saving state:', value);
 
-          this.notesStore.updateNote({
+          await this.notesStore.updateNote({
             ...selectedNote,
             content: value,
           });
@@ -52,37 +59,55 @@ export class NoteDisplayComponent implements OnInit, OnDestroy {
     this.startPooling();
   }
 
-  ngOnDestroy(): void {
+  stopPooling() {
+    if (this.syncInterval) {
+      this.syncInterval.unsubscribe();
+      this.syncInterval = null;
+    }
+  }
+
+  test() {
+    console.log('apud')
+  }
+
+  async ngOnDestroy(): Promise<void> {
     document.removeEventListener(
       'visibilitychange',
-      this.handleVisibilityChange
+      await this.handleVisibilityChange
     );
+
     this.stopPooling();
     if (this.inputSubscription) {
       this.inputSubscription.unsubscribe();
     }
+    this.stopPooling
   }
 
-  handleVisibilityChange = (): void => {
+  async handleVisibilityChange(): Promise<void> {
     if (document.visibilityState === 'hidden') {
       this.status = 'Inactive';
+      this.test()
       this.stopPooling();
     } else if (document.visibilityState === 'visible') {
       this.status = 'Active';
-      this.syncState();
-      this.startPooling();
+      await this.syncState();
+      await this.startPooling();
     }
   };
 
-  syncState(): void {
+  async syncState(): Promise<void> {
     console.log('Syncing state...');
-    this.state = this.notesStore.getSelectedNote()?.content ?? this.state;
+    console.log(this.notesStore.getSelectedNote())
+
+    const persistedState = await this.notesStore.getSelectedNote()?.content ?? this.state;
+    this.state = persistedState;
+    console.log(this.state)
     this.textboxControl.setValue(this.state, { emitEvent: false });
   }
 
-  startPooling(): void {
+  async startPooling(): Promise<void> {
     this.syncInterval = interval(5000).subscribe(() => {
-      console.log('Polling data...');
+      //console.log('Polling data...');
       const latestState =
         this.notesStore.getSelectedNote()?.content || this.state;
       if (latestState !== this.textboxControl.value) {
@@ -92,26 +117,6 @@ export class NoteDisplayComponent implements OnInit, OnDestroy {
     });
   }
 
-  stopPooling(): void {
-    if (this.syncInterval) {
-      this.syncInterval.unsubscribe();
-      this.syncInterval = null;
-    }
-  }
 
-  //=================================================================//
-  noteContentInput = computed(() => {
-    return this.notesStore.getSelectedNote()?.content ?? '';
-  });
 
-  get noteContent(): string {
-    return this.notesStore.getSelectedNote()?.content || '';
-  }
-
-  set noteContent(value: string) {
-    const selectedNote = this.notesStore.getSelectedNote();
-    if (selectedNote) {
-      this.notesStore.updateNote({ ...selectedNote, content: value });
-    }
-  }
 }
