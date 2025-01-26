@@ -1,0 +1,14 @@
+<div class="default-notes-display__header">
+  <h3>Default note</h3>
+  <h4>
+    Warning: this section will be present in localstorage and be accessible
+    regardless auth status
+  </h4>
+</div>
+<div class="default-notes-display__content">
+  <textarea
+    wrap="off"
+    [(ngModel)]="notesStore.defaultNote"
+    class="default-notes-display__textarea"
+  ></textarea>
+</div>

@@ -1,0 +1,37 @@
+.default-notes-display__header {
+  padding: 1.25rem 1rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  background-color: var(--color-main-text-area);
+  color: var(--color-main-text);
+  border: none;
+  flex-direction: column;
+  align-items: center;
+}
+
+.default-notes-display__content {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  flex: 1;
+  align-self: stretch;
+}
+
+.default-notes-display__textarea {
+  padding-left: 3rem;
+  overflow: auto;
+  resize: none;
+  white-space: pre;
+  outline: none;
+  background-color: var(--color-main-text-area);
+  color: var(--color-main-text);
+  border: none;
+  margin: 0;
+  justify-content: start;
+  flex: 1;
+
+  &:focus {
+    outline-color: none;
+  }
+}

@@ -8,6 +8,7 @@ import { Note } from '../models/note.model';
 export class PersistanceService {
   private dbName = 'NotesAppDB';
   private storeName = 'notes';
+  private defaultNoteStorageKey = 'defaultNoteContent';
   private db!: IDBPDatabase;
   private dbInitialized: Promise<void>;
 
@@ -166,5 +167,13 @@ export class PersistanceService {
     await this.dbInitialized;
 
     return await this.db.get('settings', 'selectedNote');
+  }
+
+  getDefaultNoteContent(): string | null {
+    return localStorage.getItem(this.defaultNoteStorageKey);
+  }
+
+  setDefaultNoteContent(content: string): void {
+    localStorage.setItem(this.defaultNoteStorageKey, content);
   }
 }

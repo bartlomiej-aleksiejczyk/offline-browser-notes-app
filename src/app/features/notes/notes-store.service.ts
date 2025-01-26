@@ -135,4 +135,11 @@ export class NotesStoreService {
       console.error('Error deleting note:', error);
     }
   }
+
+  get defaultNote() {
+    return this.persistanceService.getDefaultNoteContent() || '';
+  }
+  set defaultNote(noteContent: string) {
+    this.persistanceService.setDefaultNoteContent(noteContent);
+  }
 }

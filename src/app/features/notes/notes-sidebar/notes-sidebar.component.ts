@@ -58,6 +58,7 @@ export class NotesSidebarComponent {
     this.editedTitleName.set(null);
   }
 
+  // TODO: move this to the centralised service store
   async renameNote(event: { oldTitle: string; newTitle: string }) {
     this.editedTitleName.set(null);
     const notes = this.notesStore.getNotesList();
