@@ -13,9 +13,6 @@ export class NotesStoreService {
 
   constructor() {
     effect(() => {
-      console.log(this.selectedNote());
-    });
-    effect(() => {
       this.initializeStore();
     });
   }
