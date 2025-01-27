@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { openDB, IDBPDatabase } from 'idb';
 import { Note } from '../models/note.model';
+import { FileNode } from '../models/file-node.model';
 
 @Injectable({
   providedIn: 'root',
@@ -8,6 +9,7 @@ import { Note } from '../models/note.model';
 export class PersistanceService {
   private dbName = 'NotesAppDB';
   private storeName = 'notes';
+  private filesStoreName = 'files';
   private defaultNoteStorageKey = 'defaultNoteContent';
   private db!: IDBPDatabase;
   private dbInitialized: Promise<void>;
@@ -24,6 +26,9 @@ export class PersistanceService {
         }
         if (!db.objectStoreNames.contains('settings')) {
           db.createObjectStore('settings');
+        }
+        if (!db.objectStoreNames.contains('files')) {
+          db.createObjectStore('files', { keyPath: 'id' });
         }
       },
     });
@@ -175,5 +180,59 @@ export class PersistanceService {
 
   setDefaultNoteContent(content: string): void {
     localStorage.setItem(this.defaultNoteStorageKey, content);
+  }
+
+  async getFiles(parentId: string | null = null): Promise<FileNode[]> {
+    await this.dbInitialized;
+    const tx = this.db.transaction(this.filesStoreName, 'readonly');
+    const store = tx.objectStore(this.filesStoreName);
+    const allFiles = await store.getAll();
+
+    return parentId
+      ? allFiles.filter((file: FileNode) => file.parentId === parentId)
+      : allFiles.filter((file: FileNode) => !file.parentId);
+  }
+
+  // Add a new file or folder
+  async addFile(file: FileNode): Promise<void> {
+    await this.dbInitialized;
+    const tx = this.db.transaction(this.filesStoreName, 'readwrite');
+    const store = tx.objectStore(this.filesStoreName);
+    await store.add(file);
+    await tx.done;
+  }
+
+  async deleteFile(fileId: string): Promise<void> {
+    await this.dbInitialized;
+    const tx = this.db.transaction(this.filesStoreName, 'readwrite');
+    const store = tx.objectStore(this.filesStoreName);
+    await store.delete(fileId);
+    await tx.done;
+  }
+
+  async renameFile(fileId: string, newName: string): Promise<void> {
+    await this.dbInitialized;
+    const tx = this.db.transaction(this.filesStoreName, 'readwrite');
+    const store = tx.objectStore(this.filesStoreName);
+    const file = await store.get(fileId);
+
+    if (file) {
+      file.name = newName;
+      await store.put(file);
+    }
+    await tx.done;
+  }
+
+  async moveFile(fileId: string, newParentId: string | null): Promise<void> {
+    await this.dbInitialized;
+    const tx = this.db.transaction(this.filesStoreName, 'readwrite');
+    const store = tx.objectStore(this.filesStoreName);
+    const file = await store.get(fileId);
+
+    if (file) {
+      file.parentId = newParentId;
+      await store.put(file);
+    }
+    await tx.done;
   }
 }

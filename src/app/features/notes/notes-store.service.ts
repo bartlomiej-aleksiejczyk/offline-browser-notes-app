@@ -7,12 +7,14 @@ import { DEFAULT_NOTE_TITLE } from '../../core/navigationVariables';
   providedIn: 'root',
 })
 export class NotesStoreService {
+  private readonly persistanceService = inject(PersistanceService);
+
   private notesList = signal<Note[]>([]);
   private selectedNoteTitle = signal<string | null>(null);
   private selectedNote = signal<Note | null>(null);
-  private readonly persistanceService = inject(PersistanceService);
 
   constructor() {
+    //TODO: Remove this effect is redundant
     effect(() => {
       this.initializeStore();
     });
@@ -54,12 +56,6 @@ export class NotesStoreService {
     } catch (error) {
       console.error('Error loading all notes:', error);
     }
-  }
-
-  private updateSelectedNote(notes: Note[]): void {
-    const note = this.notesList().find(
-      (note) => note.title === this.selectedNoteTitle()
-    );
   }
 
   private async loadSelectedNoteTitle(): Promise<void> {

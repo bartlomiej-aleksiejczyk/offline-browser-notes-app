@@ -4,6 +4,6 @@
 * add error handlign for display field
 * Add escape, enter, click outside response for a modal
 ===
-* fix inproper signal usage in store and note display
-* wrap svgs in component
-* refine not auto creation and auto selection
+* Fix store and api usage
+* Add isLoading state
+* Add user animations
