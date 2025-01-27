@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NoteRenameModalComponent } from '../note-rename-modal/note-rename-modal.component';
 import { DevicePreferencesService } from '../../../core/services/device-preferences.service';
+import { DEFAULT_NOTE_TITLE } from '../../../core/navigationVariables';
 
 @Component({
   selector: 'app-notes-sidebar',
@@ -16,6 +17,7 @@ export class NotesSidebarComponent {
   notesStore = inject(NotesStoreService);
   devicePreferencesService = inject(DevicePreferencesService);
   editedTitleName = signal<string | null>(null);
+  defaultNoteTitle = DEFAULT_NOTE_TITLE;
 
   async addNewNote(position: 'start' | 'end' | number = 'end'): Promise<void> {
     await this.notesStore.addNewNote(position);
@@ -34,7 +36,7 @@ export class NotesSidebarComponent {
       if (this.devicePreferencesService.isMobile()) {
         this.notesStore.selectNote(title);
       } else {
-        this.router.navigate(['/notes', title]);
+        this.router.navigate(['/notes', title])
       }
     } catch (error) {
       console.error('Error updating selected note:', error);

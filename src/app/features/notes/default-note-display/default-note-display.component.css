@@ -9,6 +9,10 @@
   align-items: center;
 }
 
+.default-notes-display__information {
+  color: var(--color-text-secondary)
+}
+
 .default-notes-display__content {
   margin: 0;
   display: flex;
