@@ -1,0 +1,72 @@
+
+.file-explorer {
+    /* Breadcrumb */
+  }
+  .file-explorer__breadcrumb {
+    display: flex;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  .file-explorer__breadcrumb-item {
+    cursor: pointer;
+  }
+  .file-explorer__breadcrumb-item--active {
+    font-weight: bold;
+  }
+  
+  /* File List */
+  .file-explorer__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  @media (max-width: 768px) {
+    .file-explorer__list {
+      flex-direction: column;
+    }
+  }
+  
+  /* File */
+  .file-explorer__file {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100px;
+  }
+  .file-explorer__file--folder {
+    background-color: #f0f8ff;
+  }
+  .file-explorer__file--selected {
+    border-color: #007bff;
+    background-color: #e7f3ff;
+  }
+  
+  /* File Icon */
+  .file-explorer__file-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
+  
+  /* File Name */
+  .file-explorer__file-name {
+    font-size: 14px;
+    text-align: center;
+  }
+  
+  /* Actions */
+  .file-explorer__actions {
+    margin-top: 16px;
+  }
+  .file-explorer__actions .file-explorer__button {
+    margin-right: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .file-explorer__actions .file-explorer__button:last-child {
+    margin-right: 0;
+  }

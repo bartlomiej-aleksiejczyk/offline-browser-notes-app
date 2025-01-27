@@ -1,1 +1,36 @@
-<p>file-explorer works!</p>
+
+<div class="file-explorer">
+    <!-- Breadcrumb -->
+    <div class="file-explorer__breadcrumb">
+      <ng-container *ngFor="let crumb of breadcrumb; let isLast = last">
+        <span class="file-explorer__breadcrumb-item" [class.file-explorer__breadcrumb-item--active]="isLast">
+          {{ crumb.name }}
+        </span>
+        <span *ngIf="!isLast"> / </span>
+      </ng-container>
+    </div>
+  
+    <!-- File List -->
+    <div class="file-explorer__list">
+      <div
+        class="file-explorer__file"
+        *ngFor="let file of files"
+        [class.file-explorer__file--folder]="file.isFolder"
+        [class.file-explorer__file--selected]="selectedFiles.includes(file)"
+        (click)="toggleFileSelection(file)"
+      >
+        <div class="file-explorer__file-icon">
+          <ng-container *ngIf="file.isFolder; else fileIcon">📁</ng-container>
+          <ng-template #fileIcon>📄</ng-template>
+        </div>
+        <div class="file-explorer__file-name">{{ file.name }}</div>
+      </div>
+    </div>
+  
+    <!-- Actions -->
+    <div class="file-explorer__actions">
+      <button class="file-explorer__button" (click)="deleteSelectedFiles()">Delete</button>
+      <button class="file-explorer__button" (click)="moveSelectedFiles()">Move</button>
+      <button class="file-explorer__button" (click)="copySelectedFiles()">Copy</button>
+    </div>
+  </div>

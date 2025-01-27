@@ -7,7 +7,7 @@ import { PersistanceService } from '../../core/services/persistance.service';
 })
 export class FileExplorerStoreService {
   private readonly persistanceService = inject(PersistanceService);
-  private files = signal<FileNode[] | null>(null);
+  files = signal<FileNode[] | null>(null);
 
   constructor() {
     this.loadAllFiles()
