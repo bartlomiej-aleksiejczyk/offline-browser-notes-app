@@ -100,26 +100,22 @@ export class PersistanceService {
 
   async updateNote(note: Note): Promise<void> {
     await this.dbInitialized;
-
     await this.db.put(this.storeName, note);
   }
 
   async deleteNote(title: string): Promise<void> {
     const allNotes = await this.getAllNotes();
-
     const noteToDelete = allNotes.find((note) => note.title === title);
     if (!noteToDelete) {
       throw new Error(`Note with title "${title}" not found`);
     }
 
     await this.db.delete(this.storeName, noteToDelete.title);
-
     await this.reorderNotes();
   }
 
   async getAllNotes(): Promise<Note[]> {
     await this.dbInitialized;
-
     return await this.db.getAll(this.storeName);
   }
 
@@ -175,5 +171,44 @@ export class PersistanceService {
 
   setDefaultNoteContent(content: string): void {
     localStorage.setItem(this.defaultNoteStorageKey, content);
+  }
+
+  // New methods for directory handling and file manipulation:
+
+  async getDirectories(includeChildren: boolean = false): Promise<string[]> {
+    const allNotes = await this.getAllNotes();
+    const directories = new Set<string>();
+
+    allNotes.forEach((note) => {
+      const parent = note.parentName;
+      if (parent) {
+        directories.add(parent);
+        if (includeChildren) {
+          directories.add(note.title);
+        }
+      }
+    });
+
+    return Array.from(directories);
+  }
+
+  async removeNoteDirectory(title: string): Promise<void> {
+    const allNotes = await this.getAllNotes();
+    const note = allNotes.find((n) => n.title === title);
+    if (!note) {
+      throw new Error(`Note with title "${title}" not found`);
+    }
+
+    note.parentName = undefined;
+    await this.updateNote(note);
+  }
+
+  async createNoteWithDirectory(
+    note: Omit<Note, 'index'>,
+    directory: string,
+    position: 'start' | 'end' | number = 'end'
+  ): Promise<void> {
+    note.parentName = directory;
+    await this.addNote(note, position);
   }
 }
