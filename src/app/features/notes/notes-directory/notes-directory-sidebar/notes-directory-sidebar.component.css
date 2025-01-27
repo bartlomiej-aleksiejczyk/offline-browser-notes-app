@@ -1,0 +1,52 @@
+.notes-directory-sidebar {
+  padding: 15px;
+}
+
+.notes-directory-sidebar__title {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.notes-directory-sidebar__btn {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-right: 5px;
+}
+
+.notes-directory-sidebar__btn:hover {
+  background-color: #0056b3;
+}
+
+.notes-directory-sidebar__list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.notes-directory-sidebar__list-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.notes-directory-sidebar__directory-title {
+  flex-grow: 1;
+  font-size: 16px;
+}
+
+.notes-directory-sidebar__btn--new-dir {
+  background-color: #28a745;
+  margin-bottom: 20px;
+}
+
+.notes-directory-sidebar__btn--rename {
+  background-color: #ffc107;
+}
+
+.notes-directory-sidebar__btn--remove {
+  background-color: #dc3545;
+}

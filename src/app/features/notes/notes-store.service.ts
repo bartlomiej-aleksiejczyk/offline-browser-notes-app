@@ -10,6 +10,7 @@ export class NotesStoreService {
   private notesList = signal<Note[]>([]);
   private selectedNoteTitle = signal<string | null>(null);
   private selectedNote = signal<Note | null>(null);
+  private directories = signal<string[]>([]); // Stores the directories list
   private readonly persistanceService = inject(PersistanceService);
 
   constructor() {
@@ -18,7 +19,6 @@ export class NotesStoreService {
     });
   }
 
-  // TODO: Add db checking to the getters
   getSelectedNoteTitle() {
     return this.selectedNoteTitle();
   }
@@ -31,22 +31,21 @@ export class NotesStoreService {
     return this.selectedNote();
   }
 
+  // Get all directories
+  getDirectories() {
+    return this.directories();
+  }
+
   private async initializeStore(): Promise<void> {
     await this.loadAllNotes();
     await this.loadSelectedNoteTitle();
-
+    await this.loadDirectories(); // Load directories
     if (!this.selectedNoteTitle()) {
       await this.selectDefaultNote();
     }
     await this.loadSelectedNote();
   }
 
-  private isValidTitle(title: string): boolean {
-    const regex = /^[a-zA-Z0-9-_]+$/;
-    return regex.test(title);
-  }
-
-  //TODO: spearate initialization and stale cache refresh
   private async loadAllNotes(): Promise<void> {
     try {
       const notes = await this.persistanceService.getSortedNotes();
@@ -79,12 +78,26 @@ export class NotesStoreService {
     }
   }
 
-  async addNewNote(position: 'start' | 'end' | number = 'end'): Promise<void> {
+  // Load directories from PersistanceService
+  private async loadDirectories(): Promise<void> {
+    try {
+      const directories = await this.persistanceService.getDirectories();
+      this.directories.set(directories);
+    } catch (error) {
+      console.error('Error loading directories:', error);
+    }
+  }
+
+  async addNewNote(
+    position: 'start' | 'end' | number = 'end',
+    directory: string | null = null
+  ): Promise<void> {
     const newNote: Omit<Note, 'index'> = {
       title: `Note-${Date.now()}`,
       content: 'This is the content of the new note.',
       createdAt: new Date(),
       updatedAt: new Date(),
+      parentName: directory || undefined, // Assign to directory if specified
     };
 
     await this.persistanceService.addNote(newNote, position);
@@ -137,5 +150,59 @@ export class NotesStoreService {
   }
   set defaultNote(noteContent: string) {
     this.persistanceService.setDefaultNoteContent(noteContent);
+  }
+
+  async createNewDirectory(directoryTitle: string): Promise<void> {
+    try {
+      await this.persistanceService.createNoteWithDirectory(
+        {
+          title: directoryTitle,
+          content: 'This is the content of the directory.',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        '',
+        'start'
+      );
+      await this.loadDirectories();
+    } catch (error) {
+      console.error('Error creating directory:', error);
+    }
+  }
+
+  async renameDirectory(oldTitle: string, newTitle: string): Promise<void> {
+    try {
+      await this.persistanceService.updateDirectory(oldTitle, newTitle);
+      await this.loadDirectories();
+      await this.loadAllNotes();
+    } catch (error) {
+      console.error('Error renamign directory:', error);
+    }
+  }
+
+  //TODO: rename to load
+  async getNotesByDirectory(directoryTitle: string): Promise<void> {
+    try {
+      const notesInDirectory =
+        await this.persistanceService.getNotesByDirectory(directoryTitle);
+      this.notesList.set(notesInDirectory);
+    } catch (error) {
+      console.error('Error getting notes by directory:', error);
+    }
+  }
+
+  async removeDirectory(directoryTitle: string): Promise<void> {
+    try {
+      await this.persistanceService.removeNoteDirectory(directoryTitle);
+      await this.loadDirectories();
+      await this.loadAllNotes();
+    } catch (error) {
+      console.error('Error removing directory:', error);
+    }
+  }
+
+  private isValidTitle(title: string): boolean {
+    const regex = /^[a-zA-Z0-9-_]+$/;
+    return regex.test(title);
   }
 }

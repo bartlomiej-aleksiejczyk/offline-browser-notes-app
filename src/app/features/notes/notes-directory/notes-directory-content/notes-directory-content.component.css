@@ -1,0 +1,48 @@
+.notes-directory-content {
+  padding: 20px;
+}
+
+.notes-directory-content__directory {
+  margin-bottom: 20px;
+}
+
+.notes-directory-content__directory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.notes-directory-content__directory-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.notes-directory-content__btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.notes-directory-content__btn--collapse {
+  font-size: 14px;
+}
+
+.notes-directory-content__file-list {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+.notes-directory-content__file-item {
+  font-size: 14px;
+  padding: 5px 0;
+  cursor: pointer;
+}
+
+.notes-directory-content__file-item:hover {
+  background-color: #f1f1f1;
+}

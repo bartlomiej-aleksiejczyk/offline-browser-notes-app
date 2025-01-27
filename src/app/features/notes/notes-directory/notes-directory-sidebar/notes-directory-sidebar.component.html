@@ -1,0 +1,25 @@
+<div class="notes-directory-sidebar">
+  <h2 class="notes-directory-sidebar__title">Directories</h2>
+  <button class="button" (click)="createDirectory()">New Directory</button>
+
+  <ul class="notes-directory-sidebar__list">
+    <li
+      class="notes-directory-sidebar__list-item"
+      *ngFor="let directory of directories()"
+    >
+      <span class="notes-directory-sidebar__directory-title">{{
+        directory
+      }}</span>
+      <button
+        class="notes-directory-sidebar__btn notes-directory-sidebar__btn--rename"
+      >
+        Rename
+      </button>
+      <button
+        class="notes-directory-sidebar__btn notes-directory-sidebar__btn--remove"
+      >
+        Remove
+      </button>
+    </li>
+  </ul>
+</div>

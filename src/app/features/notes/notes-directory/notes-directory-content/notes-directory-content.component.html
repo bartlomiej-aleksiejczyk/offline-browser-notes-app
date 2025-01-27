@@ -1,0 +1,30 @@
+<div class="notes-directory-content">
+  <div
+    *ngFor="let directory of directories"
+    class="notes-directory-content__directory"
+  >
+    <div
+      class="notes-directory-content__directory-header"
+      (click)="toggleCollapse(directory)"
+    >
+      <span class="notes-directory-content__directory-title">{{
+        directory.title
+      }}</span>
+      <button
+        class="notes-directory-content__btn notes-directory-content__btn--collapse"
+      >
+        {{ directory.collapsed ? "Expand" : "Collapse" }}
+      </button>
+    </div>
+    <ul *ngIf="!directory.collapsed" class="notes-directory-content__file-list">
+      <li
+        *ngFor="let file of directory.files"
+        class="notes-directory-content__file-item"
+        draggable="true"
+        (dragstart)="onDragStart($event, file)"
+      >
+        {{ file }}
+      </li>
+    </ul>
+  </div>
+</div>
