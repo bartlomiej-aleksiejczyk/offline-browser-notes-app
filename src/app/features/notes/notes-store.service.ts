@@ -145,23 +145,15 @@ export class NotesStoreService {
     }
   }
 
-  get defaultNote() {
-    return this.persistanceService.getDefaultNoteContent() || '';
-  }
-  set defaultNote(noteContent: string) {
-    this.persistanceService.setDefaultNoteContent(noteContent);
-  }
-
   async createNewDirectory(directoryTitle: string): Promise<void> {
     try {
-      await this.persistanceService.createNoteWithDirectory(
+      await this.persistanceService.addNote(
         {
           title: directoryTitle,
           content: 'This is the content of the directory.',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-        '',
         'start'
       );
       await this.loadDirectories();
@@ -193,7 +185,7 @@ export class NotesStoreService {
 
   async removeDirectory(directoryTitle: string): Promise<void> {
     try {
-      await this.persistanceService.removeNoteDirectory(directoryTitle);
+      await this.persistanceService.removeDirectory(directoryTitle);
       await this.loadDirectories();
       await this.loadAllNotes();
     } catch (error) {

@@ -33,7 +33,82 @@ export class PersistanceService {
     });
   }
 
-  // Add a note to the 'notes' store
+  // Directory-specific methods
+  async addDirectory(title: string): Promise<void> {
+    const existingDirectory = await this.db.get(
+      this.directoriesStoreName,
+      title
+    );
+    if (existingDirectory) {
+      throw new Error(`Directory with title "${title}" already exists`);
+    }
+    await this.db.add(this.directoriesStoreName, { title });
+  }
+
+  async removeDirectory(title: string): Promise<void> {
+    const allNotes = await this.getAllNotes();
+    const notesInDirectory = allNotes.filter(
+      (note) => note.parentName === title
+    );
+    if (notesInDirectory.length > 0) {
+      throw new Error(`Directory "${title}" is not empty`);
+    }
+    await this.db.delete(this.directoriesStoreName, title);
+  }
+
+  async getAllDirectories(): Promise<string[]> {
+    const allDirectories = await this.db.getAll(this.directoriesStoreName);
+    return allDirectories.map((directory) => directory.title);
+  }
+
+  async updateDirectoryTitle(
+    oldTitle: string,
+    newTitle: string
+  ): Promise<void> {
+    const allDirectories = await this.getAllDirectories();
+    if (!allDirectories.includes(oldTitle)) {
+      throw new Error(`Directory with title "${oldTitle}" not found`);
+    }
+    const existingDirectory = await this.db.get(
+      this.directoriesStoreName,
+      newTitle
+    );
+    if (existingDirectory) {
+      throw new Error(`Directory with title "${newTitle}" already exists`);
+    }
+
+    const allNotes = await this.getAllNotes();
+    const notesInDirectory = allNotes.filter(
+      (note) => note.parentName === oldTitle
+    );
+
+    const transaction = this.db.transaction(
+      [this.notesStoreName, this.directoriesStoreName],
+      'readwrite'
+    );
+    const notesStore = transaction.objectStore(this.notesStoreName);
+    const directoriesStore = transaction.objectStore(this.directoriesStoreName);
+
+    for (const note of notesInDirectory) {
+      note.parentName = newTitle;
+      await notesStore.put(note);
+    }
+
+    const directory = await directoriesStore.get(oldTitle);
+    if (directory) {
+      directory.title = newTitle;
+      await directoriesStore.put(directory);
+    }
+
+    await transaction.done;
+  }
+
+  async getNotesByDirectory(directoryTitle: string): Promise<Note[]> {
+    const allNotes = await this.getAllNotes();
+    return allNotes.filter((note) => note.parentName === directoryTitle);
+  }
+
+  // Note-specific methods
   async addNote(
     note: Omit<Note, 'index'>,
     position: 'start' | 'end' | number = 'end'
@@ -103,19 +178,6 @@ export class PersistanceService {
     await transaction.done;
   }
 
-  // Get all directories
-  async getAllDirectories(): Promise<string[]> {
-    await this.dbInitialized;
-    const transaction = this.db.transaction(
-      this.directoriesStoreName,
-      'readonly'
-    );
-    const store = transaction.objectStore(this.directoriesStoreName);
-    const allDirectories = await store.getAll();
-
-    return allDirectories.map((dir) => dir.title);
-  }
-
   // Update a directory's name
   async updateDirectory(oldTitle: string, newTitle: string): Promise<void> {
     const allDirectories = await this.getAllDirectories();
@@ -162,33 +224,74 @@ export class PersistanceService {
 
     await transaction.done;
   }
+  private async reorderNotes(): Promise<void> {
+    await this.dbInitialized;
 
-  // Delete a directory and update all notes with the removed directory's title
-  async removeDirectory(directoryTitle: string): Promise<void> {
-    const allDirectories = await this.getAllDirectories();
-    const directoryIndex = allDirectories.indexOf(directoryTitle);
+    const allNotes = await this.getAllNotes();
+    const sortedNotes = allNotes.sort((a, b) => a.index - b.index);
 
-    if (directoryIndex === -1) {
-      throw new Error(`Directory with title "${directoryTitle}" not found`);
+    const transaction = this.db.transaction(this.notesStoreName, 'readwrite');
+    const store = transaction.objectStore(this.notesStoreName);
+
+    for (let i = 0; i < sortedNotes.length; i++) {
+      const note = sortedNotes[i];
+      note.index = i + 1;
+      await store.put(note);
+    }
+    await transaction.done;
+  }
+  async deleteNote(title: string): Promise<void> {
+    const allNotes = await this.getAllNotes();
+
+    const noteToDelete = allNotes.find((note) => note.title === title);
+    if (!noteToDelete) {
+      throw new Error(`Note with title "${title}" not found`);
     }
 
-    // Remove directory from the store
-    const transaction = this.db.transaction(
-      this.directoriesStoreName,
-      'readwrite'
-    );
-    const store = transaction.objectStore(this.directoriesStoreName);
-    await store.delete(directoryTitle);
+    await this.db.delete(this.notesStoreName, noteToDelete.title);
 
-    // Update all notes that reference the deleted directory
-    await this.updateNotesParent(directoryTitle, '');
+    await this.reorderNotes();
+  }
 
+  async setSelectedNote(title: string): Promise<void> {
+    await this.dbInitialized;
+
+    const transaction = this.db.transaction('settings', 'readwrite');
+    const store = transaction.objectStore('settings');
+    await store.put(title, 'selectedNote');
     await transaction.done;
   }
 
-  // Get notes by a specific directory
-  async getNotesByDirectory(directoryTitle: string): Promise<Note[]> {
+  async reorderNote(noteTitle: string, targetIndex: number): Promise<void> {
     const allNotes = await this.getAllNotes();
-    return allNotes.filter((note) => note.parentName === directoryTitle);
+
+    const validIndex = Math.max(0, Math.min(targetIndex, allNotes.length - 1));
+
+    const noteToMove = allNotes.find((note) => note.title === noteTitle);
+    if (!noteToMove) {
+      throw new Error(`Note with title "${noteTitle}" not found`);
+    }
+
+    const notesWithoutMoved = allNotes.filter(
+      (note) => note.title !== noteTitle
+    );
+
+    notesWithoutMoved.splice(validIndex, 0, noteToMove);
+
+    const transaction = this.db.transaction(this.notesStoreName, 'readwrite');
+    const store = transaction.objectStore(this.notesStoreName);
+
+    for (let i = 0; i < notesWithoutMoved.length; i++) {
+      const note = notesWithoutMoved[i];
+      note.index = i;
+      await store.put(note);
+    }
+
+    await transaction.done;
+  }
+  async updateNote(note: Note): Promise<void> {
+    await this.dbInitialized;
+
+    await this.db.put(this.notesStoreName, note);
   }
 }
