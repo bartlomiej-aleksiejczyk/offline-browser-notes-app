@@ -29,7 +29,8 @@
 .note-titles-list__item {
   background-color: var(--color-secondary);
   color: var(--color-main-text);
-
+  align-self: stretch;
+  flex-grow: 1;
   margin: 0.2rem;
   padding: 0.2rem 0.5rem;
   display: flex;

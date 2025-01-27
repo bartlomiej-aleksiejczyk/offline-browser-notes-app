@@ -56,12 +56,6 @@ export class NotesStoreService {
     }
   }
 
-  private updateSelectedNote(notes: Note[]): void {
-    const note = this.notesList().find(
-      (note) => note.title === this.selectedNoteTitle()
-    );
-  }
-
   private async loadSelectedNoteTitle(): Promise<void> {
     try {
       const selectedNoteTitle =
