@@ -18,7 +18,7 @@ export class PersistanceService {
   }
 
   private async initDB(): Promise<void> {
-    this.db = await openDB(this.dbName, 1, {
+    this.db = await openDB(this.dbName, 4, {
       upgrade(db) {
         if (!db.objectStoreNames.contains('notes')) {
           db.createObjectStore('notes', { keyPath: 'title' });
@@ -35,6 +35,8 @@ export class PersistanceService {
 
   // Directory-specific methods
   async addDirectory(title: string): Promise<void> {
+    await this.dbInitialized;
+
     const existingDirectory = await this.db.get(
       this.directoriesStoreName,
       title
@@ -42,7 +44,14 @@ export class PersistanceService {
     if (existingDirectory) {
       throw new Error(`Directory with title "${title}" already exists`);
     }
-    await this.db.add(this.directoriesStoreName, { title });
+    const transaction = this.db.transaction(
+      this.directoriesStoreName,
+      'readwrite'
+    );
+    const store = transaction.objectStore(this.directoriesStoreName);
+
+    await store.add({ title: title });
+    await transaction.done;
   }
 
   async removeDirectory(title: string): Promise<void> {
@@ -57,6 +66,8 @@ export class PersistanceService {
   }
 
   async getAllDirectories(): Promise<string[]> {
+    await this.dbInitialized;
+
     const allDirectories = await this.db.getAll(this.directoriesStoreName);
     return allDirectories.map((directory) => directory.title);
   }
@@ -65,6 +76,8 @@ export class PersistanceService {
     oldTitle: string,
     newTitle: string
   ): Promise<void> {
+    await this.dbInitialized;
+
     const allDirectories = await this.getAllDirectories();
     if (!allDirectories.includes(oldTitle)) {
       throw new Error(`Directory with title "${oldTitle}" not found`);
@@ -104,6 +117,8 @@ export class PersistanceService {
   }
 
   async getNotesByDirectory(directoryTitle: string): Promise<Note[]> {
+    await this.dbInitialized;
+
     const allNotes = await this.getAllNotes();
     return allNotes.filter((note) => note.parentName === directoryTitle);
   }
@@ -113,6 +128,8 @@ export class PersistanceService {
     note: Omit<Note, 'index'>,
     position: 'start' | 'end' | number = 'end'
   ): Promise<void> {
+    await this.dbInitialized;
+
     const allNotes = await this.getAllNotes();
     const existingNote = allNotes.find((n) => n.title === note.title);
     if (existingNote) {
@@ -163,6 +180,8 @@ export class PersistanceService {
 
   // Create a new directory in the 'directories' store
   async createDirectory(directoryTitle: string): Promise<void> {
+    await this.dbInitialized;
+
     const transaction = this.db.transaction(
       this.directoriesStoreName,
       'readwrite'
@@ -180,6 +199,8 @@ export class PersistanceService {
 
   // Update a directory's name
   async updateDirectory(oldTitle: string, newTitle: string): Promise<void> {
+    await this.dbInitialized;
+
     const allDirectories = await this.getAllDirectories();
     const directory = allDirectories.find((dir) => dir === oldTitle);
     if (!directory) {
@@ -194,10 +215,11 @@ export class PersistanceService {
 
     const updatedDirectory = {
       title: newTitle,
-      createdAt: new Date(),
     };
 
     await store.put(updatedDirectory);
+    await store.delete(directory);
+
     await transaction.done;
 
     // Now, update all notes that belong to this directory
@@ -209,6 +231,8 @@ export class PersistanceService {
     oldTitle: string,
     newTitle: string
   ): Promise<void> {
+    await this.dbInitialized;
+
     const allNotes = await this.getAllNotes();
     const notesToUpdate = allNotes.filter(
       (note) => note.parentName === oldTitle
@@ -240,6 +264,7 @@ export class PersistanceService {
     }
     await transaction.done;
   }
+
   async deleteNote(title: string): Promise<void> {
     const allNotes = await this.getAllNotes();
 

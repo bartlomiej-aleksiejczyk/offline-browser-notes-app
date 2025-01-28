@@ -149,15 +149,8 @@ export class NotesStoreService {
 
   async createNewDirectory(directoryTitle: string): Promise<void> {
     try {
-      await this.persistanceService.addNote(
-        {
-          title: directoryTitle,
-          content: 'This is the content of the directory.',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        'start'
-      );
+      console.log(23222323232);
+      await this.persistanceService.addDirectory(directoryTitle);
       await this.loadDirectories();
     } catch (error) {
       console.error('Error creating directory:', error);
@@ -171,7 +164,7 @@ export class NotesStoreService {
       await this.loadAllNotes();
     } catch (error) {
       console.error('Error renamign directory:', error);
-  }
+    }
   }
 
   //TODO: rename to load

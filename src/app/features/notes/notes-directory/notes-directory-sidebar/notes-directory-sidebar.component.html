@@ -12,11 +12,13 @@
       }}</span>
       <button
         class="notes-directory-sidebar__btn notes-directory-sidebar__btn--rename"
+        (click)="renameDirectory(directory)"
       >
         Rename
       </button>
       <button
         class="notes-directory-sidebar__btn notes-directory-sidebar__btn--remove"
+        (click)="removeDirectory(directory)"
       >
         Remove
       </button>
