@@ -289,9 +289,29 @@ export class PersistanceService {
 
     await transaction.done;
   }
+
+  async getNoteByTitle(title: string): Promise<Note | undefined> {
+    const allNotes = await this.getAllNotes();
+    return allNotes.find((note) => note.title === title);
+  }
+
   async updateNote(note: Note): Promise<void> {
     await this.dbInitialized;
 
     await this.db.put(this.notesStoreName, note);
+  }
+
+  async getSelectedNoteTitle(): Promise<string | null> {
+    await this.dbInitialized;
+
+    return await this.db.get('settings', 'selectedNote');
+  }
+
+  getDefaultNoteContent(): string | null {
+    return localStorage.getItem(this.defaultNoteStorageKey);
+  }
+
+  setDefaultNoteContent(content: string): void {
+    localStorage.setItem(this.defaultNoteStorageKey, content);
   }
 }

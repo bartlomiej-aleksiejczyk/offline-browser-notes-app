@@ -83,7 +83,7 @@ export class NotesStoreService {
   // Load directories from PersistanceService
   private async loadDirectories(): Promise<void> {
     try {
-      const directories = await this.persistanceService.getDirectories();
+      const directories = await this.persistanceService.getAllDirectories();
       this.directories.set(directories);
     } catch (error) {
       console.error('Error loading directories:', error);
