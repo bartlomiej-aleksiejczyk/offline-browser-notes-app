@@ -14,11 +14,13 @@ export class NotesStoreService {
   private readonly persistanceService = inject(PersistanceService);
 
   constructor() {
+    //TODO: Remove this effect is redundant
     effect(() => {
       this.initializeStore();
     });
   }
 
+  // TODO: Add db checking to the getters
   getSelectedNoteTitle() {
     return this.selectedNoteTitle();
   }
@@ -169,7 +171,7 @@ export class NotesStoreService {
       await this.loadAllNotes();
     } catch (error) {
       console.error('Error renamign directory:', error);
-    }
+  }
   }
 
   //TODO: rename to load
