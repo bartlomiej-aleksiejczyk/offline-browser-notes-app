@@ -195,6 +195,13 @@ export class NotesStoreService {
     }
   }
 
+  get defaultNote() {
+    return this.persistanceService.getDefaultNoteContent() || '';
+  }
+  set defaultNote(noteContent: string) {
+    this.persistanceService.setDefaultNoteContent(noteContent);
+  }
+
   private isValidTitle(title: string): boolean {
     const regex = /^[a-zA-Z0-9-_]+$/;
     return regex.test(title);
