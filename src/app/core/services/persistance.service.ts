@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { openDB, IDBPDatabase } from 'idb';
 import { Note } from '../models/note.model';
+import { NoteDirectory } from '../models/directory.model';
 
 @Injectable({
   providedIn: 'root',
@@ -49,8 +50,9 @@ export class PersistanceService {
       'readwrite'
     );
     const store = transaction.objectStore(this.directoriesStoreName);
-
-    await store.add({ title: title });
+    const index = (await store.getAll())?.length;
+    console.log(index);
+    await store.add({ title: title, index: index });
     await transaction.done;
   }
 
@@ -65,11 +67,18 @@ export class PersistanceService {
     await this.db.delete(this.directoriesStoreName, title);
   }
 
-  async getAllDirectories(): Promise<string[]> {
+  async getAllDirectoriesName(): Promise<string[]> {
     await this.dbInitialized;
 
     const allDirectories = await this.db.getAll(this.directoriesStoreName);
     return allDirectories.map((directory) => directory.title);
+  }
+
+  async getAllDirectories(): Promise<any[]> {
+    await this.dbInitialized;
+
+    const allDirectories = await this.db.getAll(this.directoriesStoreName);
+    return allDirectories;
   }
 
   async updateDirectoryTitle(
@@ -78,7 +87,7 @@ export class PersistanceService {
   ): Promise<void> {
     await this.dbInitialized;
 
-    const allDirectories = await this.getAllDirectories();
+    const allDirectories = await this.getAllDirectoriesName();
     if (!allDirectories.includes(oldTitle)) {
       throw new Error(`Directory with title "${oldTitle}" not found`);
     }
@@ -201,7 +210,7 @@ export class PersistanceService {
   async updateDirectory(oldTitle: string, newTitle: string): Promise<void> {
     await this.dbInitialized;
 
-    const allDirectories = await this.getAllDirectories();
+    const allDirectories = await this.getAllDirectoriesName();
     const directory = allDirectories.find((dir) => dir === oldTitle);
     if (!directory) {
       throw new Error(`Directory with title "${oldTitle}" not found`);
@@ -338,5 +347,23 @@ export class PersistanceService {
 
   setDefaultNoteContent(content: string): void {
     localStorage.setItem(this.defaultNoteStorageKey, content);
+  }
+
+  async getAllNotesGroupedByDirectory() {
+    const allDirectories = [
+      ...(await this.getAllDirectories()),
+      { title: 'undefined~title', index: -1 },
+    ];
+    const allNotes = await this.getAllNotes();
+    const groupedNotes = allDirectories.map((directory) => {
+      let files = allNotes.filter(
+        (note) => note?.parentName === directory?.title
+      );
+      if (directory?.title === 'undefined~title') {
+        files = allNotes.filter((note) => !note?.parentName);
+      }
+      return { ...directory, files: files };
+    });
+    return groupedNotes;
   }
 }
