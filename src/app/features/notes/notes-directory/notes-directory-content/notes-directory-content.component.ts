@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { NotesStoreService } from '../../notes-store.service';
 
 @Component({
   imports: [CommonModule],
@@ -8,19 +9,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./notes-directory-content.component.css'],
 })
 export class NotesDirectoryContentComponent {
-  directories = [
-    {
-      title: 'Directory 1',
-      collapsed: false,
-      files: ['File 1.1', 'File 1.2', 'File 1.3'],
-    },
-    {
-      title: 'Directory 2',
-      collapsed: true,
-      files: ['File 2.1', 'File 2.2'],
-    },
-  ];
+  notesStoreService = inject(NotesStoreService);
 
+  directories = computed(() => {
+    this.notesStoreService.getDirectories;
+  });
   toggleCollapse(directory: any) {
     directory.collapsed = !directory.collapsed;
   }
