@@ -4,5 +4,5 @@ export interface Note {
   content: string;
   createdAt: Date;
   updatedAt: Date;
-  parentName?: string;
+  parentTitle?: string;
 }

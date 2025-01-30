@@ -11,7 +11,7 @@ export class NotesStoreService {
   private selectedNoteTitle = signal<string | null>(null);
   private selectedNote = signal<Note | null>(null);
   private directories = signal<string[]>([]);
-  private groupedNotes = signal([])
+  private groupedNotes = signal([]);
   private readonly persistanceService = inject(PersistanceService);
 
   constructor() {
@@ -51,6 +51,7 @@ export class NotesStoreService {
       await this.selectDefaultNote();
     }
     await this.loadSelectedNote();
+    await this.loadGroupedNotes();
   }
 
   private async loadAllNotes(): Promise<void> {
@@ -104,7 +105,7 @@ export class NotesStoreService {
       content: 'This is the content of the new note.',
       createdAt: new Date(),
       updatedAt: new Date(),
-      parentName: directory || undefined, // Assign to directory if specified
+      parentTitle: directory ?? undefined, // Assign to directory if specified
     };
 
     await this.persistanceService.addNote(newNote, position);
@@ -181,7 +182,17 @@ export class NotesStoreService {
     }
   }
 
-  async getAllNotesGroupedByDirectory(){
+  async loadGroupedNotes(): Promise<void> {
+    try {
+      const groupedNotes =
+        await this.persistanceService.getAllNotesGroupedByDirectory();
+      this.groupedNotes.set(groupedNotes as any);
+    } catch (error) {
+      console.error('Error getting groupes notes:', error);
+    }
+  }
+
+  async getAllNotesGroupedByDirectory() {
     try {
       const groupedNotes =
         await this.persistanceService.getAllNotesGroupedByDirectory();

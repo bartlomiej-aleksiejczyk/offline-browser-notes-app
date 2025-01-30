@@ -58,7 +58,7 @@ export class PersistanceService {
   async deleteDirectory(title: string): Promise<void> {
     const allNotes = await this.getAllNotes();
     const notesInDirectory = allNotes.filter(
-      (note) => note.parentName === title
+      (note) => note.parentTitle === title
     );
     if (notesInDirectory.length > 0) {
       throw new Error(`Directory "${title}" is not empty`);
@@ -100,7 +100,7 @@ export class PersistanceService {
 
     const allNotes = await this.getAllNotes();
     const notesInDirectory = allNotes.filter(
-      (note) => note.parentName === oldTitle
+      (note) => note.parentTitle === oldTitle
     );
 
     const transaction = this.db.transaction(
@@ -111,7 +111,7 @@ export class PersistanceService {
     const directoriesStore = transaction.objectStore(this.directoriesStoreName);
 
     for (const note of notesInDirectory) {
-      note.parentName = newTitle;
+      note.parentTitle = newTitle;
       await notesStore.put(note);
     }
 
@@ -128,7 +128,7 @@ export class PersistanceService {
     await this.dbInitialized;
 
     const allNotes = await this.getAllNotes();
-    return allNotes.filter((note) => note.parentName === directoryTitle);
+    return allNotes.filter((note) => note.parentTitle === directoryTitle);
   }
 
   async addNote(
@@ -236,14 +236,14 @@ export class PersistanceService {
 
     const allNotes = await this.getAllNotes();
     const notesToUpdate = allNotes.filter(
-      (note) => note.parentName === oldTitle
+      (note) => note.parentTitle === oldTitle
     );
 
     const transaction = this.db.transaction(this.notesStoreName, 'readwrite');
     const store = transaction.objectStore(this.notesStoreName);
 
     for (const note of notesToUpdate) {
-      note.parentName = newTitle;
+      note.parentTitle = newTitle;
       await store.put(note);
     }
 
@@ -272,7 +272,10 @@ export class PersistanceService {
     const allDirectories = await this.getAllDirectories();
     const sortedDirectories = allDirectories.sort((a, b) => a.index - b.index);
 
-    const transaction = this.db.transaction(this.directoriesStoreName, 'readwrite');
+    const transaction = this.db.transaction(
+      this.directoriesStoreName,
+      'readwrite'
+    );
     const store = transaction.objectStore(this.directoriesStoreName);
 
     for (let i = 0; i < sortedDirectories.length; i++) {
@@ -366,10 +369,11 @@ export class PersistanceService {
     const allNotes = await this.getAllNotes();
     const groupedNotes = allDirectories.map((directory) => {
       let files = allNotes.filter(
-        (note) => note?.parentName === directory?.title
+        (note) => note?.parentTitle === directory?.title
       );
+      console.log('allnotes', allNotes);
       if (directory?.title === 'undefined~title') {
-        files = allNotes.filter((note) => !note?.parentName);
+        files = allNotes.filter((note) => !note?.parentTitle);
       }
       return { ...directory, files: files };
     });

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { NotesStoreService } from '../../notes-store.service';
 
 @Component({
@@ -10,10 +10,15 @@ import { NotesStoreService } from '../../notes-store.service';
 })
 export class NotesDirectoryContentComponent {
   notesStoreService = inject(NotesStoreService);
-
+  constructor() {
+    effect(() => {
+      console.log('dirs', this.directories());
+    });
+  }
   directories = computed(() => {
-    this.notesStoreService.getGroupedNotes();
-  });
+    console.log(this.notesStoreService.getGroupedNotes());
+    return this.notesStoreService.getGroupedNotes();
+  }) as any;
   toggleCollapse(directory: any) {
     directory.collapsed = !directory.collapsed;
   }
