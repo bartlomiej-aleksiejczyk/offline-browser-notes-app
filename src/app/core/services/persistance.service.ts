@@ -50,13 +50,12 @@ export class PersistanceService {
       'readwrite'
     );
     const store = transaction.objectStore(this.directoriesStoreName);
-    const index = (await store.getAll())?.length;
-    console.log(index);
-    await store.add({ title: title, index: index });
+    await store.add({ title: title, index: 0 });
     await transaction.done;
+    await this.reorderDirectories();
   }
 
-  async removeDirectory(title: string): Promise<void> {
+  async deleteDirectory(title: string): Promise<void> {
     const allNotes = await this.getAllNotes();
     const notesInDirectory = allNotes.filter(
       (note) => note.parentName === title
@@ -132,7 +131,6 @@ export class PersistanceService {
     return allNotes.filter((note) => note.parentName === directoryTitle);
   }
 
-  // Note-specific methods
   async addNote(
     note: Omit<Note, 'index'>,
     position: 'start' | 'end' | number = 'end'
@@ -171,13 +169,11 @@ export class PersistanceService {
     await transaction.done;
   }
 
-  // Get all notes
   async getAllNotes(): Promise<Note[]> {
     await this.dbInitialized;
     return await this.db.getAll(this.notesStoreName);
   }
 
-  // Get sorted notes
   async getSortedNotes(): Promise<Note[]> {
     await this.dbInitialized;
     const transaction = this.db.transaction(this.notesStoreName, 'readonly');
@@ -187,7 +183,6 @@ export class PersistanceService {
     return allNotes.sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
   }
 
-  // Create a new directory in the 'directories' store
   async createDirectory(directoryTitle: string): Promise<void> {
     await this.dbInitialized;
 
@@ -206,7 +201,6 @@ export class PersistanceService {
     await transaction.done;
   }
 
-  // Update a directory's name
   async updateDirectory(oldTitle: string, newTitle: string): Promise<void> {
     await this.dbInitialized;
 
@@ -231,11 +225,9 @@ export class PersistanceService {
 
     await transaction.done;
 
-    // Now, update all notes that belong to this directory
     await this.updateNotesParent(directory, newTitle);
   }
 
-  // Update the parentName of all notes belonging to a specific directory
   private async updateNotesParent(
     oldTitle: string,
     newTitle: string
@@ -270,6 +262,23 @@ export class PersistanceService {
       const note = sortedNotes[i];
       note.index = i + 1;
       await store.put(note);
+    }
+    await transaction.done;
+  }
+
+  private async reorderDirectories(): Promise<void> {
+    await this.dbInitialized;
+
+    const allDirectories = await this.getAllDirectories();
+    const sortedDirectories = allDirectories.sort((a, b) => a.index - b.index);
+
+    const transaction = this.db.transaction(this.directoriesStoreName, 'readwrite');
+    const store = transaction.objectStore(this.directoriesStoreName);
+
+    for (let i = 0; i < sortedDirectories.length; i++) {
+      const directory = sortedDirectories[i];
+      directory.index = i + 1;
+      await store.put(directory);
     }
     await transaction.done;
   }

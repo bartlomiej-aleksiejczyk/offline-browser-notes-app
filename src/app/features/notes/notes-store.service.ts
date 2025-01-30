@@ -10,7 +10,8 @@ export class NotesStoreService {
   private notesList = signal<Note[]>([]);
   private selectedNoteTitle = signal<string | null>(null);
   private selectedNote = signal<Note | null>(null);
-  private directories = signal<string[]>([]); // Stores the directories list
+  private directories = signal<string[]>([]);
+  private groupedNotes = signal([])
   private readonly persistanceService = inject(PersistanceService);
 
   constructor() {
@@ -18,6 +19,10 @@ export class NotesStoreService {
     effect(() => {
       this.initializeStore();
     });
+  }
+
+  getGroupedNotes() {
+    return this.groupedNotes();
   }
 
   // TODO: Add db checking to the getters
@@ -149,7 +154,6 @@ export class NotesStoreService {
 
   async createNewDirectory(directoryTitle: string): Promise<void> {
     try {
-      console.log(23222323232);
       await this.persistanceService.addDirectory(directoryTitle);
       await this.loadDirectories();
     } catch (error) {
@@ -167,8 +171,7 @@ export class NotesStoreService {
     }
   }
 
-  //TODO: rename to load
-  async getNotesByDirectory(directoryTitle: string): Promise<void> {
+  async loadNotesByDirectory(directoryTitle: string): Promise<void> {
     try {
       const notesInDirectory =
         await this.persistanceService.getNotesByDirectory(directoryTitle);
@@ -178,9 +181,19 @@ export class NotesStoreService {
     }
   }
 
+  async getAllNotesGroupedByDirectory(){
+    try {
+      const groupedNotes =
+        await this.persistanceService.getAllNotesGroupedByDirectory();
+      this.groupedNotes.set(groupedNotes as any);
+    } catch (error) {
+      console.error('Error fetching notes by directory:', error);
+    }
+  }
+
   async removeDirectory(directoryTitle: string): Promise<void> {
     try {
-      await this.persistanceService.removeDirectory(directoryTitle);
+      await this.persistanceService.deleteDirectory(directoryTitle);
       await this.loadDirectories();
       await this.loadAllNotes();
     } catch (error) {

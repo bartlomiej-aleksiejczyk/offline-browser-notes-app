@@ -12,7 +12,7 @@ export class NotesDirectoryContentComponent {
   notesStoreService = inject(NotesStoreService);
 
   directories = computed(() => {
-    this.notesStoreService.getDirectories;
+    this.notesStoreService.getGroupedNotes();
   });
   toggleCollapse(directory: any) {
     directory.collapsed = !directory.collapsed;
