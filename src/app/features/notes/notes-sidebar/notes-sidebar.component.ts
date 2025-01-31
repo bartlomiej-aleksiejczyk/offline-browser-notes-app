@@ -5,12 +5,13 @@ import { Router } from '@angular/router';
 import { NoteRenameModalComponent } from '../note-rename-modal/note-rename-modal.component';
 import { DevicePreferencesService } from '../../../core/services/device-preferences.service';
 import { DEFAULT_NOTE_TITLE } from '../../../core/navigationVariables';
+import { SearchableSelectComponent } from '../../../shared/searchable-select/searchable-select.component';
 
 @Component({
   selector: 'app-notes-sidebar',
   templateUrl: './notes-sidebar.component.html',
   styleUrls: ['./notes-sidebar.component.css'],
-  imports: [CommonModule, NoteRenameModalComponent],
+  imports: [CommonModule, NoteRenameModalComponent, SearchableSelectComponent],
 })
 export class NotesSidebarComponent {
   private readonly router = inject(Router);
@@ -36,7 +37,7 @@ export class NotesSidebarComponent {
       if (this.devicePreferencesService.isMobile()) {
         this.notesStore.selectNote(title);
       } else {
-        this.router.navigate(['/notes', title])
+        this.router.navigate(['/notes', title]);
       }
     } catch (error) {
       console.error('Error updating selected note:', error);
@@ -77,5 +78,9 @@ export class NotesSidebarComponent {
     if (this.notesStore.getSelectedNoteTitle() === event.oldTitle) {
       await this.notesStore.selectNote(event.newTitle);
     }
+  }
+
+  onSelectDirectory(event: string) {
+    this.notesStore.setSelectedDirectoryTitle(event);
   }
 }

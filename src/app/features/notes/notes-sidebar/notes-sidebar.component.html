@@ -1,7 +1,18 @@
-<div class="sidebar-button-wrapper">
-  <button class="button sidebar-button" (click)="addNewNote()">
-    Add New Note
-  </button>
+<div class="sidebar-sticky">
+  <div class="sidebar-button-wrapper">
+    <button class="button sidebar-button" (click)="addNewNote()">
+      Add New Note
+    </button>
+  </div>
+  <div class="sidebar-top-label">
+    <p>Choose directory:</p>
+  </div>
+  <app-searchable-select
+    [options]="notesStore.getDirectories()"
+    [selectedOption]="notesStore.getSelectedDirectoryTitle()"
+    (selectionChanged)="onSelectDirectory($event)"
+  >
+  </app-searchable-select>
 </div>
 <div class="note-titles-list">
   <div

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { openDB, IDBPDatabase } from 'idb';
 import { Note } from '../models/note.model';
-import { NoteDirectory } from '../models/directory.model';
 
 @Injectable({
   providedIn: 'root',

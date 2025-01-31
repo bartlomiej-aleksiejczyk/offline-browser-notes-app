@@ -72,11 +72,27 @@
 }
 
 .sidebar-button-wrapper {
-  margin: 0.5rem calc(1rem + 2px) 0;
+  margin: 0.25rem calc(1rem + 2px) 0;
   align-self: stretch;
   display: flex;
   position: sticky;
   padding: 1rem 0;
   background-color: var(--color-background);
   top: 0;
+}
+
+.sidebar-sticky {
+  position: sticky;
+  display: flex;
+  flex-direction: column;
+  top: 0;
+  background-color: var(--color-background);
+  flex-grow: 0;
+}
+
+.sidebar-top-label {
+  margin: 0 calc(1rem + 2px) 0;
+  align-self: stretch;
+  display: flex;
+  background-color: var(--color-background);
 }

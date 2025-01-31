@@ -1,0 +1,25 @@
+<div class="dropdown">
+  <input
+    type="text"
+    [(ngModel)]="searchText"
+    (input)="filterOptions()"
+    (click)="toggleDropdown()"
+    placeholder="Select an option..."
+    class="dropdown-input"
+  />
+  @if(isDropdownOpen){
+  <div class="dropdown-list">
+    @for(option of filteredOptions; let i = $index; track option) {
+    <div
+      class="dropdown-item"
+      [class.highlighted]="i === highlightedIndex"
+      (click)="selectOption(option)"
+    >
+      {{ option }}
+    </div>
+    } @if(filteredOptions.length === 0){
+    <div class="dropdown-item empty">No results found</div>
+    }
+  </div>
+  }
+</div>

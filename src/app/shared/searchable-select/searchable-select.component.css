@@ -1,0 +1,58 @@
+/* Retro Square Aesthetic */
+.dropdown {
+  position: relative;
+  flex-grow: 1;
+  font-family: monospace;
+}
+
+.dropdown-input {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid black;
+  background: var(--color-background);
+  color: black;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+}
+
+.dropdown-list {
+  position: absolute;
+  width: 100%;
+  border: 2px solid black;
+  background: white;
+  box-shadow: 3px 3px 0px black;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.dropdown-item {
+  padding: 8px;
+  border-bottom: 1px solid black;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover,
+.dropdown-item.highlighted {
+  background: #ddd;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item.empty {
+  text-align: center;
+  font-style: italic;
+}
+:host {
+  margin: 0rem calc(1rem + 2px) 0.3rem;
+  align-self: stretch;
+  display: flex;
+  position: sticky;
+  padding-bottom: 0.5rem;
+  background-color: var(--color-background);
+  top: 0;
+}

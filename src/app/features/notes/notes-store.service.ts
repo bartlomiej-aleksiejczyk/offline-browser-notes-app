@@ -12,6 +12,7 @@ export class NotesStoreService {
   private selectedNote = signal<Note | null>(null);
   private directories = signal<string[]>([]);
   private groupedNotes = signal([]);
+  private selectedDirectoryTitle = signal<string | null>(null);
   private readonly persistanceService = inject(PersistanceService);
 
   constructor() {
@@ -19,6 +20,9 @@ export class NotesStoreService {
     effect(() => {
       this.initializeStore();
     });
+  }
+  getSelectedDirectoryTitle() {
+    return this.selectedDirectoryTitle();
   }
 
   getGroupedNotes() {
@@ -222,5 +226,9 @@ export class NotesStoreService {
   private isValidTitle(title: string): boolean {
     const regex = /^[a-zA-Z0-9-_]+$/;
     return regex.test(title);
+  }
+
+  setSelectedDirectoryTitle(title: string) {
+    this.selectedDirectoryTitle.set(title);
   }
 }
