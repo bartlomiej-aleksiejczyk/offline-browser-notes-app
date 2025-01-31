@@ -1,9 +1,13 @@
-* fix wrong name problem
-* fix wrong input problem
-* add error handling for modal
-* add error handlign for display field
-* Add escape, enter, click outside response for a modal
+- fix wrong name problem
+- fix wrong input problem
+- add error handling for modal
+- add error handlign for display field
+- # Add escape, enter, click outside response for a modal
+- fix inproper signal usage in store and note display
+- wrap svgs in component
+- refine not auto creation and auto selection
+
 ===
-* fix inproper signal usage in store and note display
-* wrap svgs in component
-* refine not auto creation and auto selection
+
+- fix dropdown default and hightlight
+- add css for directories and drag and drop and responsivness
