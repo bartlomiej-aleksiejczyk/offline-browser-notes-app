@@ -12,7 +12,7 @@ export class SearchableSelectComponent {
   isDropdownOpen = false;
   searchText: string = '';
   highlightedIndex = -1;
-  selectionChanged = output<string>();
+  selectionChanged = output<string | null>();
   selectedOption = input.required<string | null>();
   options = input.required<string[]>();
 
@@ -33,8 +33,8 @@ export class SearchableSelectComponent {
     this.highlightedIndex = -1; // Reset highlight
   }
 
-  selectOption(option: string) {
-    this.searchText = option; // Show selected option
+  selectOption(option: string | null) {
+    this.searchText = option ?? 'All'; // Show selected option
     this.isDropdownOpen = false;
     this.selectionChanged.emit(option);
   }

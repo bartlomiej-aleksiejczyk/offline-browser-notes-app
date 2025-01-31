@@ -9,10 +9,17 @@
   />
   @if(isDropdownOpen){
   <div class="dropdown-list">
+    <div
+      class="dropdown-item"
+      [class.highlighted]="0 === highlightedIndex"
+      (click)="selectOption(null)"
+    >
+      All
+    </div>
     @for(option of filteredOptions; let i = $index; track option) {
     <div
       class="dropdown-item"
-      [class.highlighted]="i === highlightedIndex"
+      [class.highlighted]="i === highlightedIndex + 1"
       (click)="selectOption(option)"
     >
       {{ option }}

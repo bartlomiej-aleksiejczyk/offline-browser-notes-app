@@ -49,8 +49,6 @@ export class NoteDisplayComponent implements OnInit, OnDestroy {
         tap(async (value) => {
           const selectedNote = this.notesStore.getSelectedNote();
           if (!value || !selectedNote) return;
-          console.log('Saving state:', value);
-
           await this.notesStore.updateNote({
             ...selectedNote,
             content: value,
@@ -83,7 +81,6 @@ export class NoteDisplayComponent implements OnInit, OnDestroy {
 
   async handleVisibilityChange(): Promise<void> {
     if (document.visibilityState === 'hidden') {
-      console.log('dfssssssssssss');
       this.status = 'Inactive';
       // this.stopPooling();
     } else if (document.visibilityState === 'visible') {
@@ -94,13 +91,9 @@ export class NoteDisplayComponent implements OnInit, OnDestroy {
   }
 
   async syncState(): Promise<void> {
-    console.log('Syncing state...');
-    console.log(this.notesStore.getSelectedNote());
-
     const persistedState =
       (await this.notesStore.getSelectedNote()?.content) ?? this.state;
     this.state = persistedState;
-    console.log(this.state);
     this.textboxControl.setValue(this.state, { emitEvent: false });
   }
 

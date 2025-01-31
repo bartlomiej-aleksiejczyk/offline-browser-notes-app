@@ -60,7 +60,14 @@ export class NotesStoreService {
 
   private async loadAllNotes(): Promise<void> {
     try {
-      const notes = await this.persistanceService.getSortedNotes();
+      let notes = [];
+      if (this.selectedDirectoryTitle()) {
+        notes = await this.persistanceService.getNotesByDirectory(
+          this.selectedDirectoryTitle() as string
+        );
+      } else {
+        notes = await this.persistanceService.getSortedNotes();
+      }
       this.notesList.set(notes);
     } catch (error) {
       console.error('Error loading all notes:', error);

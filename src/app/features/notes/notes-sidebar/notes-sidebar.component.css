@@ -81,13 +81,14 @@
   top: 0;
 }
 
-.sidebar-sticky {
+.sidebar-sticky-wrapper {
   position: sticky;
   display: flex;
   flex-direction: column;
   top: 0;
   background-color: var(--color-background);
   flex-grow: 0;
+  align-self: stretch;
 }
 
 .sidebar-top-label {

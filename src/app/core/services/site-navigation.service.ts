@@ -38,7 +38,6 @@ export class SiteNavigationService {
     effect(() => {
       if (!this.devicePreferencesService.isMobile()) {
         const selectedNoteTitle = this.notesStore.getSelectedNoteTitle();
-        console.log(this.currentRouteName());
         if (
           selectedNoteTitle &&
           ['browse-files-in-directory', 'edit-note'].includes(
