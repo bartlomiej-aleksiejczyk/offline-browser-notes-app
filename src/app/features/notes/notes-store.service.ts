@@ -202,7 +202,7 @@ export class NotesStoreService {
     }
   }
 
-  async removeDirectory(directoryTitle: string): Promise<void> {
+  async deleteDirectory(directoryTitle: string): Promise<void> {
     try {
       await this.persistanceService.deleteDirectory(directoryTitle);
       await this.loadDirectories();

@@ -30,12 +30,12 @@ export class NotesDirectorySidebarComponent {
   }
 
   // Remove an existing directory
-  async removeDirectory(directoryTitle: string) {
+  async deleteDirectory(directoryTitle: string) {
     const confirmRemove = confirm(
       `Are you sure you want to remove the directory "${directoryTitle}"?`
     );
     if (confirmRemove) {
-      await this.notesStoreService.removeDirectory(directoryTitle);
+      await this.notesStoreService.deleteDirectory(directoryTitle);
     }
   }
 }
