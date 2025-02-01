@@ -9,5 +9,6 @@
 
 ===
 
-- fix dropdown default and hightlight
+- add icns to the dropdown - collapse -expadn
+- fix sidebar resize when emptu
 - add css for directories and drag and drop and responsivness
