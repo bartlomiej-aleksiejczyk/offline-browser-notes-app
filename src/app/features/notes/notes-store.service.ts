@@ -235,7 +235,7 @@ export class NotesStoreService {
     return regex.test(title);
   }
 
-  setSelectedDirectoryTitle(title: string) {
+  setSelectedDirectoryTitle(title: string | null) {
     this.selectedDirectoryTitle.set(title);
   }
 }

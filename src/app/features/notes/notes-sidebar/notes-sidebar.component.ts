@@ -80,7 +80,7 @@ export class NotesSidebarComponent {
     }
   }
 
-  onSelectDirectory(event: string) {
+  onSelectDirectory(event: string | null) {
     this.notesStore.setSelectedDirectoryTitle(event);
   }
 }

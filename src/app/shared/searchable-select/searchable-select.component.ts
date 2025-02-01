@@ -1,4 +1,4 @@
-import { Component, HostListener, input, output } from '@angular/core';
+import { Component, HostListener, input, OnInit, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -7,14 +7,20 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './searchable-select.component.html',
   styleUrl: './searchable-select.component.css',
 })
-export class SearchableSelectComponent {
+export class SearchableSelectComponent implements OnInit {
+
   filteredOptions: string[] = [];
   isDropdownOpen = false;
   searchText: string = '';
   highlightedIndex = -1;
-  selectionChanged = output<string | null>();
+  onSelectionChanged = output<string | null>();
   selectedOption = input.required<string | null>();
+  emptyLabel = input<string>('Empty')
   options = input.required<string[]>();
+  
+  ngOnInit(): void {
+    this.searchText = this.selectedOption() ?? this.emptyLabel();
+  }
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
@@ -30,13 +36,13 @@ export class SearchableSelectComponent {
     this.filteredOptions = this.options().filter((option) =>
       option.toLowerCase().includes(this.searchText.toLowerCase())
     );
-    this.highlightedIndex = -1; // Reset highlight
+    this.highlightedIndex = -1;
   }
 
-  selectOption(option: string | null) {
-    this.searchText = option ?? 'All'; // Show selected option
+  onSelectOption(option: string | null) {
+    this.searchText = option ?? this.emptyLabel();
     this.isDropdownOpen = false;
-    this.selectionChanged.emit(option);
+    this.onSelectionChanged.emit(option);
   }
 
   @HostListener('document:click', ['$event'])
@@ -50,16 +56,22 @@ export class SearchableSelectComponent {
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
     if (!this.isDropdownOpen) return;
-
+    console.log(this.highlightedIndex)
     if (event.key === 'ArrowDown') {
       this.highlightedIndex =
         (this.highlightedIndex + 1) % this.filteredOptions.length;
     } else if (event.key === 'ArrowUp') {
-      this.highlightedIndex =
-        (this.highlightedIndex - 1 + this.filteredOptions.length) %
-        this.filteredOptions.length;
+      console.log(this.filteredOptions.length, this.highlightedIndex)
+      if (this.highlightedIndex === -1) {
+        this.highlightedIndex = 0;
+      } else {
+        this.highlightedIndex =
+        (this.highlightedIndex - 1 + this.filteredOptions.length +1) %
+        this.filteredOptions.length + 1;
+      }
     } else if (event.key === 'Enter' && this.highlightedIndex !== -1) {
-      this.selectOption(this.filteredOptions[this.highlightedIndex]);
+      this.onSelectOption(this.filteredOptions[this.highlightedIndex]);
     }
   }
 }
+    

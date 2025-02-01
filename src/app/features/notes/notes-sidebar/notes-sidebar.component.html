@@ -10,7 +10,8 @@
   <app-searchable-select
     [options]="notesStore.getDirectories()"
     [selectedOption]="notesStore.getSelectedDirectoryTitle()"
-    (selectionChanged)="onSelectDirectory($event)"
+    [emptyLabel]="'All notes'"
+    (onSelectionChanged)="onSelectDirectory($event)"
   >
   </app-searchable-select>
 </div>

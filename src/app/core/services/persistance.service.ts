@@ -370,7 +370,6 @@ export class PersistanceService {
       let files = allNotes.filter(
         (note) => note?.parentTitle === directory?.title
       );
-      console.log('allnotes', allNotes);
       if (directory?.title === 'undefined~title') {
         files = allNotes.filter((note) => !note?.parentTitle);
       }

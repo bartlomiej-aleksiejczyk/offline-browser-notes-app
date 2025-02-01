@@ -12,16 +12,16 @@
     <div
       class="dropdown-item"
       [class.highlighted]="0 === highlightedIndex"
-      (click)="selectOption(null)"
-    >
-      All
+      (click)="onSelectOption(null)"
+    > 
+      {{emptyLabel()}}
     </div>
     @for(option of filteredOptions; let i = $index; track option) {
     <div
       class="dropdown-item"
       [class.highlighted]="i === highlightedIndex + 1"
-      (click)="selectOption(option)"
-    >
+      (click)="onSelectOption(option)"
+  > {{i}}
       {{ option }}
     </div>
     } @if(filteredOptions.length === 0){
