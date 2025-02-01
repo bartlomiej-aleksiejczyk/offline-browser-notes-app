@@ -8,16 +8,15 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './searchable-select.component.css',
 })
 export class SearchableSelectComponent implements OnInit {
-
   filteredOptions: string[] = [];
   isDropdownOpen = false;
   searchText: string = '';
   highlightedIndex = -1;
   onSelectionChanged = output<string | null>();
   selectedOption = input.required<string | null>();
-  emptyLabel = input<string>('Empty')
+  emptyLabel = input<string>('Empty');
   options = input.required<string[]>();
-  
+
   ngOnInit(): void {
     this.searchText = this.selectedOption() ?? this.emptyLabel();
   }
@@ -27,6 +26,12 @@ export class SearchableSelectComponent implements OnInit {
     if (this.isDropdownOpen) {
       this.searchText = '';
       this.filterOptions();
+      const selectedOptionsIndex = this.filteredOptions.findIndex(
+        (option) => option === this.selectedOption()
+      );
+      this.highlightedIndex = selectedOptionsIndex;
+
+      console.log(selectedOptionsIndex);
     } else {
       this.searchText = this.selectedOption() ?? '';
     }
@@ -49,29 +54,25 @@ export class SearchableSelectComponent implements OnInit {
   onClickOutside(event: Event) {
     if (!(event.target as HTMLElement).closest('.dropdown')) {
       this.isDropdownOpen = false;
-      this.searchText = this.selectedOption() ?? '';
+      this.searchText = this.selectedOption() ?? this.emptyLabel();
     }
   }
 
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
     if (!this.isDropdownOpen) return;
-    console.log(this.highlightedIndex)
+
+    const maxItemIndex = this.filteredOptions.length - 1;
     if (event.key === 'ArrowDown') {
+      const incrementedIndex = this.highlightedIndex + 1;
       this.highlightedIndex =
-        (this.highlightedIndex + 1) % this.filteredOptions.length;
+        incrementedIndex > maxItemIndex ? -1 : incrementedIndex;
     } else if (event.key === 'ArrowUp') {
-      console.log(this.filteredOptions.length, this.highlightedIndex)
-      if (this.highlightedIndex === -1) {
-        this.highlightedIndex = 0;
-      } else {
-        this.highlightedIndex =
-        (this.highlightedIndex - 1 + this.filteredOptions.length +1) %
-        this.filteredOptions.length + 1;
-      }
+      const decrementedIndex = this.highlightedIndex - 1;
+      this.highlightedIndex =
+        decrementedIndex < -1 ? maxItemIndex : decrementedIndex;
     } else if (event.key === 'Enter' && this.highlightedIndex !== -1) {
       this.onSelectOption(this.filteredOptions[this.highlightedIndex]);
     }
   }
 }
-    

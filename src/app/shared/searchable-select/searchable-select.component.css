@@ -20,7 +20,7 @@
   position: absolute;
   width: 100%;
   border: 2px solid var(--color-main-text);
-  background: var(--color-text-on-primary);
+  background: var(--color-main-text-area);
   box-shadow: 3px 3px 0px var(--color-main-text);
   max-height: 150px;
   overflow-y: auto;
@@ -34,9 +34,11 @@
   transition: background 0.2s;
 }
 
-.dropdown-item:hover,
+.dropdown-item:hover {
+  background-color: var(--color-secondary-lighter);
+}
 .dropdown-item.highlighted {
-  background-color: var(--color-main-text);
+  background-color: var(--color-secondary);
 }
 
 .dropdown-item:last-child {

@@ -6,22 +6,24 @@
     (click)="toggleDropdown()"
     placeholder="Select an option..."
     class="dropdown-input"
-  />
+  >
+</input>
   @if(isDropdownOpen){
   <div class="dropdown-list">
     <div
       class="dropdown-item"
-      [class.highlighted]="0 === highlightedIndex"
+      [class.highlighted]="-1 === highlightedIndex"
       (click)="onSelectOption(null)"
-    > 
-      {{emptyLabel()}}
+    >
+      {{ emptyLabel() }}
     </div>
     @for(option of filteredOptions; let i = $index; track option) {
     <div
       class="dropdown-item"
-      [class.highlighted]="i === highlightedIndex + 1"
+      [class.highlighted]="i === highlightedIndex"
       (click)="onSelectOption(option)"
-  > {{i}}
+    >
+      {{ i }}
       {{ option }}
     </div>
     } @if(filteredOptions.length === 0){
