@@ -10,13 +10,8 @@ import { NotesStoreService } from '../../notes-store.service';
 })
 export class NotesDirectoryContentComponent {
   notesStoreService = inject(NotesStoreService);
-  constructor() {
-    effect(() => {
-      console.log('dirs', this.directories());
-    });
-  }
+
   directories = computed(() => {
-    console.log(this.notesStoreService.getGroupedNotes());
     return this.notesStoreService.getGroupedNotes();
   }) as any;
   toggleCollapse(directory: any) {
@@ -32,7 +27,6 @@ export class NotesDirectoryContentComponent {
     event.preventDefault();
     const file = event.dataTransfer?.getData('file');
     if (file) {
-      console.log(`Dropped file: ${file}`);
       // Implement your drop logic
     }
   }

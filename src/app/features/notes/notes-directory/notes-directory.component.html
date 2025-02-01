@@ -1,6 +1,13 @@
-<app-notes-directory-sidebar
-  class="notes-directory__sidebar"
-></app-notes-directory-sidebar>
-<app-notes-directory-content
-  class="notes-directory__content"
-></app-notes-directory-content>
+<div
+  [ngClass]="{
+    'notes-directory--mobile': devicePreferencesService.isMobile()
+  }"
+  class="notes-directory"
+>
+  <app-notes-directory-sidebar
+    class="notes-directory__sidebar"
+  ></app-notes-directory-sidebar>
+  <app-notes-directory-content
+    class="notes-directory__content"
+  ></app-notes-directory-content>
+</div>

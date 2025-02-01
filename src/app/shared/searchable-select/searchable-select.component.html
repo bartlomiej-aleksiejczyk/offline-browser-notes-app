@@ -6,8 +6,7 @@
     (click)="toggleDropdown()"
     placeholder="Select an option..."
     class="dropdown-input"
-  >
-</input>
+  />
   @if(isDropdownOpen){
   <div class="dropdown-list">
     <div
@@ -23,7 +22,6 @@
       [class.highlighted]="i === highlightedIndex"
       (click)="onSelectOption(option)"
     >
-      {{ i }}
       {{ option }}
     </div>
     } @if(filteredOptions.length === 0){

@@ -1,52 +1,56 @@
 .notes-directory-sidebar {
-  padding: 15px;
+  padding-top: 0.25rem;
+  margin: 0;
+  align-self: stretch;
 }
 
 .notes-directory-sidebar__title {
-  font-size: 20px;
-  margin-bottom: 20px;
-}
-
-.notes-directory-sidebar__btn {
-  padding: 8px 12px;
-  font-size: 14px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-  border-radius: 4px;
-  margin-right: 5px;
-}
-
-.notes-directory-sidebar__btn:hover {
-  background-color: #0056b3;
+  font-size: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
 .notes-directory-sidebar__list {
   list-style-type: none;
-  padding: 0;
+  padding: 1.25rem 0 0 0;
 }
 
 .notes-directory-sidebar__list-item {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-top: 0.5rem;
+  border: 2px solid var(--color-secondary-darker);
+  padding: 0.25rem 0.5rem;
 }
 
 .notes-directory-sidebar__directory-title {
   flex-grow: 1;
-  font-size: 16px;
 }
 
-.notes-directory-sidebar__btn--new-dir {
-  background-color: #28a745;
-  margin-bottom: 20px;
+.note-titles-list__button-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 0.2rem;
 }
 
-.notes-directory-sidebar__btn--rename {
-  background-color: #ffc107;
+.icon-button {
+  cursor: pointer;
+  margin: auto 0.2rem auto 0;
+  padding: 0;
+  height: 22px;
+  background-color: transparent;
+  color: none;
+
+  &:hover {
+    background-color: var(--color-secondary);
+  }
+
+  &:active {
+    transform: translateY(2px);
+  }
 }
 
-.notes-directory-sidebar__btn--remove {
-  background-color: #dc3545;
+.icon-button__icon {
+  margin: 0;
+  fill: var(--color-text-primary);
 }

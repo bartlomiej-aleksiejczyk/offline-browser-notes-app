@@ -1,31 +1,44 @@
 .notes-directory-content {
-  padding: 20px;
+  padding: 0 1rem 1rem 1rem;
+}
+.notes-directory-content__title {
+  font-size: 1.25rem;
+  margin-bottom: 1.25rem;
+  margin-top: 0.25rem;
 }
 
 .notes-directory-content__directory {
-  margin-bottom: 20px;
+  border: 2px solid var(--color-primary-darker);
+  border-radius: 5px;
+  margin-bottom: 5px;
 }
 
 .notes-directory-content__directory-header {
+  padding: 0.25rem 0.25rem 0.25rem 0.75rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
 }
 
 .notes-directory-content__directory-title {
-  font-size: 18px;
+  font-size: 1.1rem;
   font-weight: bold;
 }
 
 .notes-directory-content__btn {
-  padding: 6px 10px;
+  padding: 0.4rem 0.6rem;
   font-size: 12px;
   border: none;
-  background-color: #007bff;
+  background-color: transparent;
   color: white;
   cursor: pointer;
   border-radius: 4px;
+}
+.notes-directory-content__icon {
+  fill: var(--color-text-on-primary);
 }
 
 .notes-directory-content__btn--collapse {
@@ -34,15 +47,26 @@
 
 .notes-directory-content__file-list {
   list-style-type: none;
-  padding-left: 20px;
+  min-height: 1rem;
 }
 
 .notes-directory-content__file-item {
-  font-size: 14px;
-  padding: 5px 0;
+  font-size: 1rem;
+  padding: 0.75rem 0.5rem;
+  background-color: var(--color-main-text-area);
+  border-bottom: 2px solid var(--color-secondary-darker);
   cursor: pointer;
 }
-
+.notes-directory-content__file-item:first-child {
+}
+.notes-directory-content__file-item:last-child {
+  border-bottom: none;
+}
 .notes-directory-content__file-item:hover {
   background-color: #f1f1f1;
+}
+
+.notes-directory-content__header {
+  font-size: 1.25rem;
+  margin-bottom: 1.25rem;
 }

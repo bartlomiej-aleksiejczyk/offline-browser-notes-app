@@ -3,9 +3,14 @@ import { NotesStoreService } from '../notes-store.service';
 import { NotesDirectoryContentComponent } from './notes-directory-content/notes-directory-content.component';
 import { NotesDirectorySidebarComponent } from './notes-directory-sidebar/notes-directory-sidebar.component';
 import { DevicePreferencesService } from '../../../core/services/device-preferences.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  imports: [NotesDirectoryContentComponent, NotesDirectorySidebarComponent],
+  imports: [
+    NotesDirectoryContentComponent,
+    NotesDirectorySidebarComponent,
+    CommonModule,
+  ],
   selector: 'app-notes-directory',
   templateUrl: './notes-directory.component.html',
   styleUrls: ['./notes-directory.component.css'],
