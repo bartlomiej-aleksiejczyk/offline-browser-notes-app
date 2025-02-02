@@ -1,10 +1,11 @@
 <div class="notes-directory-content" cdkDropListGroup>
+  <h3 class="notes-directory-content__title">Manage directories' content</h3>
   @for(directory of directories(); let i = $index; track directory.title){
   <div
     class="notes-directory-content__directory"
-    [cdkDropListData]="directory"
     cdkDropList
     (cdkDropListDropped)="drop($event)"
+    [cdkDropListData]="directory.title"
   >
     <div
       class="notes-directory-content__directory-header"
@@ -47,16 +48,10 @@
     @if(!directory.collapsed){
     <ul class="notes-directory-content__file-list">
       @for(file of directory.files; track file.title){
-      <li
-        class="notes-directory-content__file-item"
-        [cdkDragData]="file"
-        cdkDrag
-      >
+      <li class="notes-directory-content__file-item" cdkDrag>
         {{ file.title }}
       </li>
-      <li class="notes-directory-content__file-item" *cdkDragPlaceholder>
-        {{ file.title }}
-      </li>
+
       }
     </ul>
     }
