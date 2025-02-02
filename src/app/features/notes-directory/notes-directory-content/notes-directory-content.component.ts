@@ -33,7 +33,7 @@ export class NotesDirectoryContentComponent {
     event.preventDefault();
     const file = event.dataTransfer?.getData('file');
     if (file) {
-      console.log('ddddd')
+      console.log('ddddd');
     }
   }
 
@@ -42,15 +42,27 @@ export class NotesDirectoryContentComponent {
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
-    }
+    console.log(event.previousContainer.data);
+    console.log(event.container.data);
+
+    this.notesStoreService.updateNote({
+      ...event.item.data,
+      parentTitle: (event.container.data as any).title,
+    });
+    // this.notesStoreService.
+    // if (event.previousContainer === event.container) {
+    //   moveItemInArray(
+    //     event.container.data,
+    //     event.previousIndex,
+    //     event.currentIndex
+    //   );
+    // } else {
+    //   transferArrayItem(
+    //     event.previousContainer.data,
+    //     event.container.data,
+    //     event.previousIndex,
+    //     event.currentIndex
+    //   );
+    // }
   }
 }
