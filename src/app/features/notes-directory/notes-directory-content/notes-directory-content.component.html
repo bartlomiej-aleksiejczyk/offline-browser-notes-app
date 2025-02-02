@@ -48,7 +48,11 @@
     @if(!directory.collapsed){
     <ul class="notes-directory-content__file-list">
       @for(file of directory.files; track file.title){
-      <li class="notes-directory-content__file-item" cdkDrag>
+      <li
+        class="notes-directory-content__file-item"
+        cdkDrag
+        [cdkDragData]="file"
+      >
         {{ file.title }}
       </li>
 

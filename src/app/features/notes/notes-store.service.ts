@@ -131,6 +131,8 @@ export class NotesStoreService {
     }
     await this.persistanceService.updateNote(note);
     await this.loadAllNotes();
+    await this.loadSelectedNote();
+    await this.loadGroupedNotes();
     await this.loadSelectedNoteTitle();
     await this.loadSelectedNote();
   }

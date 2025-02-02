@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import {
   CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem,
   CdkDrag,
   CdkDropList,
+  CdkDropListGroup,
 } from '@angular/cdk/drag-drop';
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { NotesStoreService } from '../../notes/notes-store.service';
+import { DEFAULT_NOTE_TITLE } from '../../../core/navigationVariables';
 
 @Component({
-  imports: [CommonModule, CdkDrag, CdkDropList],
+  imports: [CommonModule, CdkDrag, CdkDropList, CdkDropListGroup],
   selector: 'app-notes-directory-content',
   templateUrl: './notes-directory-content.component.html',
   styleUrls: ['./notes-directory-content.component.css'],
@@ -42,27 +42,16 @@ export class NotesDirectoryContentComponent {
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    console.log(event.previousContainer.data);
-    console.log(event.container.data);
+    let movedNoteParentTitle = event.container.data as any;
 
-    this.notesStoreService.updateNote({
+    //TODO: move this to const, add reload after adding new note, fix flickerign
+    if (movedNoteParentTitle === 'undefined~title') {
+      movedNoteParentTitle = null;
+    }
+    const newNote = {
       ...event.item.data,
-      parentTitle: (event.container.data as any).title,
-    });
-    // this.notesStoreService.
-    // if (event.previousContainer === event.container) {
-    //   moveItemInArray(
-    //     event.container.data,
-    //     event.previousIndex,
-    //     event.currentIndex
-    //   );
-    // } else {
-    //   transferArrayItem(
-    //     event.previousContainer.data,
-    //     event.container.data,
-    //     event.previousIndex,
-    //     event.currentIndex
-    //   );
-    // }
+      parentTitle: movedNoteParentTitle,
+    };
+    this.notesStoreService.updateNote(newNote);
   }
 }
