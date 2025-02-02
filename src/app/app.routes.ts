@@ -1,7 +1,7 @@
 import { Route, Routes } from '@angular/router';
 import { NotesComponent } from './features/notes/notes.component';
 import { NotesSidebarComponent } from './features/notes/notes-sidebar/notes-sidebar.component';
-import { NotesDirectoryComponent } from './features/notes/notes-directory/notes-directory.component';
+import { NotesDirectoryComponent } from './features/notes-directory/notes-directory.component';
 export interface NamedRoute extends Route {
   systemName: string;
 }

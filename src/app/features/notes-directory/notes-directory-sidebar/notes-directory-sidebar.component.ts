@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
-import { NotesStoreService } from '../../notes-store.service';
 import { CommonModule } from '@angular/common';
+import { NotesStoreService } from '../../notes/notes-store.service';
 
 @Component({
   imports: [CommonModule],
